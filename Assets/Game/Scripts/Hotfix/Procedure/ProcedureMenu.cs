@@ -9,9 +9,11 @@ namespace Game.Hotfix
     {
         private bool m_StartGame = false;
         private MenuForm m_MenuForm = null;
+        private GameMode m_GameMode;
 
-        public void StartGame()
+        public void StartGame(GameMode gameMode)
         {
+            m_GameMode = gameMode;
             m_StartGame = true;
         }
 
@@ -31,7 +33,7 @@ namespace Game.Hotfix
 
             GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
 
-            if (m_MenuForm != null)
+            if (m_MenuForm != null && m_MenuForm.Visible)
             {
                 m_MenuForm.Close(isShutdown);
                 m_MenuForm = null;
@@ -45,7 +47,7 @@ namespace Game.Hotfix
             if (m_StartGame)
             {
                 procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Main"));
-                procedureOwner.SetData<VarByte>("GameMode", (byte)GameMode.Survival);
+                procedureOwner.SetData<VarByte>("GameMode", (byte)m_GameMode);
                 ChangeState<ProcedureChangeScene>(procedureOwner);
             }
         }

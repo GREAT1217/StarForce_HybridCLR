@@ -15,7 +15,7 @@ namespace Game.Hotfix
     /// <summary>
     /// 战机类。
     /// </summary>
-    public abstract class Aircraft : TargetableObject
+    public class Aircraft : TargetableObject
     {
         [SerializeField]
         private AircraftData m_AircraftData = null;

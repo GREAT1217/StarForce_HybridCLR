@@ -25,5 +25,9 @@
     <String Key="Setting.UISound" Value="UI Sound FX" />
     <String Key="Setting.Language" Value="Language" />
     <String Key="Setting.LanguageTips" Value="Language change demands restarting." />
+    <String Key="AskSelectGame.Title" Value="Game" />
+    <String Key="AskSelectGame.Message" Value="Select Game Mode" />
+    <String Key="GameMode.Survival" Value="Survival Mode" />
+    <String Key="GameMode.Boss" Value="Boss Mode" />
   </Dictionary>
 </Dictionaries>

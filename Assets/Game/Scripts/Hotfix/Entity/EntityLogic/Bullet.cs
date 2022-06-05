@@ -66,7 +66,12 @@ namespace Game.Hotfix
                 return;
             }
 
-            CachedTransform.Translate(Vector3.forward * m_BulletData.Speed * elapseSeconds, Space.World);
+            Vector3 dir = Vector3.forward;
+            if (m_BulletData.OwnerCamp == CampType.Enemy || m_BulletData.OwnerCamp == CampType.Enemy2)
+            {
+                dir = Vector3.back;
+            }
+            CachedTransform.Translate(dir * m_BulletData.Speed * elapseSeconds, Space.World);
         }
     }
 }

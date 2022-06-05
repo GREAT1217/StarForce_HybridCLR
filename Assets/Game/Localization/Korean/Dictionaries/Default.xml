@@ -25,5 +25,9 @@
     <String Key="Setting.UISound" Value="UI 효과음" />
     <String Key="Setting.Language" Value="언어" />
     <String Key="Setting.LanguageTips" Value="사용언어를 바꾼후 리부팅이 필요 합니다" />
+    <String Key="AskSelectGame.Title" Value="게임" />
+    <String Key="AskSelectGame.Message" Value="게임 모드 선택" />
+    <String Key="GameMode.Survival" Value="생존 모드" />
+    <String Key="GameMode.Boss" Value="Boss 모드" />
   </Dictionary>
 </Dictionaries>
