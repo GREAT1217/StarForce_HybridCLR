@@ -20,7 +20,6 @@ namespace Game.Hotfix
 
         public ImpactData GetImpactData()
         {
-            Log.Info("获取 Bullet 阵营 = " + m_BulletData.OwnerCamp);
             return new ImpactData(m_BulletData.OwnerCamp, 0, m_BulletData.Attack, 0);
         }
 

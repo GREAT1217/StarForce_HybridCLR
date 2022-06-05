@@ -132,9 +132,6 @@ namespace Game.Hotfix
             {
                 ImpactData entityImpactData = entity.GetImpactData();
                 ImpactData targetImpactData = target.GetImpactData();
-                Log.Info(entityImpactData.Camp + "===" + entity);
-                Log.Info(targetImpactData.Camp + "===" + target);
-
                 if (GetRelation(entityImpactData.Camp, targetImpactData.Camp) == RelationType.Friendly)
                 {
                     return;
@@ -160,8 +157,6 @@ namespace Game.Hotfix
             {
                 ImpactData entityImpactData = entity.GetImpactData();
                 ImpactData bulletImpactData = bullet.GetImpactData();
-                Log.Info("获取 Bullet 对象 = "+bullet + " = " + bulletImpactData.Camp);
-                
                 if (GetRelation(entityImpactData.Camp, bulletImpactData.Camp) == RelationType.Friendly)
                 {
                     return;

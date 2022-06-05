@@ -89,8 +89,6 @@ namespace Game.Hotfix
                 return;
             }
 
-            Log.Info("碰撞=" + entity.Name + "=" + Name);
-
             AIUtility.PerformCollision(this, entity);
         }
     }
