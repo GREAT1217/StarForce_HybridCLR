@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Game;
 using GameFramework;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -31,8 +32,9 @@ public class RefTypes : MonoBehaviour
         new Dictionary<KeyValuePair<ByteEnum, ByteEnum>, ByteEnum>();
         new Dictionary<KeyValuePair<ByteEnum, ByteEnum>, ByteEnum[]>();
         Utility.Text.Format<ByteEnum, string, string>(null, ByteEnum.A, null, null);
+        GameEntry.Localization.GetString<string, string, string, string, string, string>(null, null, null, null, null, null, null);
     }
-    
+
     void RefUnityEngine()
     {
         GameObject.Instantiate<GameObject>(null);

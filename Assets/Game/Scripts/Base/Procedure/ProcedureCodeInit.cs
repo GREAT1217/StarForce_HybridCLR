@@ -17,11 +17,13 @@ namespace Game
         {
             base.OnEnter(procedureOwner);
 
-            // m_HotfixAssembly = System.AppDomain.CurrentDomain.GetAssemblies().First(assembly => assembly.GetName().Name == "Game.Hotfix");
-            // m_IsLoadedDll = true;
-
+#if UNITY_EDITOR
+            m_HotfixAssembly = System.AppDomain.CurrentDomain.GetAssemblies().First(assembly => assembly.GetName().Name == "Game.Hotfix");
+            m_IsLoadedDll = true;
+#else
             m_IsLoadedDll = false;
             GameEntry.Resource.LoadAsset("Assets/Game/Hotfix/Game.Hotfix.dll.bytes", new LoadAssetCallbacks(OnLoadAssetSuccess, OnLoadAssetFail));
+#endif
         }
 
         protected override void OnLeave(IFsm<IProcedureManager> procedureOwner, bool isShutdown)
