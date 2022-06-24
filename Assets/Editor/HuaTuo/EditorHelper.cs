@@ -1,4 +1,4 @@
-using HuaTuo.Generators;
+using Huatuo.Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,33 +8,14 @@ using UnityEditor.Build.Player;
 using UnityEngine;
 using FileMode = System.IO.FileMode;
 
-namespace HuaTuo
+namespace Huatuo
 {
     /// <summary>
     /// 这里仅仅是一个流程展示
     /// 简单说明如果你想将huatuo的dll做成自动化的简单实现
     /// </summary>
-    public class HuaTuoEditorHelper
+    public class EditorHelper
     {
-        /// <summary>
-        /// 打包时，将热更新脚本自动加入到link include的assembly列表，对于普通类，就不会出现因为类型裁剪导致热更新dll运行时
-        /// 报 TypeMissing的错误了。
-        /// 但====注意====，这个办法只是方便新手体验热更新。打包后，热更新dll新增类型引用，如果被裁剪了，依然会报错的。
-        /// 因此正式的工作流，还是得靠link.xml里preserve你想要的类，后续我们会提供更正式的工作流及相关工具。
-        /// 另外，这个办法只能解决普通类裁剪的问题，不能解决AOT泛型函数实例化缺失的问题。
-        /// </summary>
-        [InitializeOnLoadMethod]
-        private static void Setup()
-        {
-            //var linkAdds = string.Join(" ", HuaTuo_BuildProcessor_2020_1_OR_NEWER.s_allHotUpdateDllNames
-            //    .Select(s => $"--include-assembly={Path.Combine(Environment.CurrentDirectory, $"Temp/StagingArea/Data/Managed/{s}").Replace('\\', '/')}"));
-            //var envVar = Environment.GetEnvironmentVariable("UNITYLINKER_ADDITIONAL_ARGS");
-
-            //if (envVar != linkAdds)
-            //{
-            //    Environment.SetEnvironmentVariable("UNITYLINKER_ADDITIONAL_ARGS", linkAdds);
-            //}
-        }
 
         private static void CreateDirIfNotExists(string dirName)
         {
@@ -56,7 +37,6 @@ namespace HuaTuo
             ScriptCompilationSettings scriptCompilationSettings = new ScriptCompilationSettings();
             scriptCompilationSettings.group = group;
             scriptCompilationSettings.target = target;
-            scriptCompilationSettings.options = ScriptCompilationOptions.DevelopmentBuild;
             CreateDirIfNotExists(buildDir);
             ScriptCompilationResult scriptCompilationResult = PlayerBuildInterface.CompilePlayerScripts(scriptCompilationSettings, buildDir);
             foreach (var ass in scriptCompilationResult.assemblies)
@@ -65,49 +45,49 @@ namespace HuaTuo
             }
         }
 
-        public static string DllBuildOutputDir => Path.GetFullPath($"{Application.dataPath}/../Temp/HuaTuo/build");
+        public static string DllBuildOutputDir => Path.GetFullPath($"{Application.dataPath}/../Temp/Huatuo/build");
 
         public static string GetDllBuildOutputDirByTarget(BuildTarget target)
         {
             return $"{DllBuildOutputDir}/{target}";
         }
 
-        [MenuItem("HuaTuo/CompileDll/ActiveBuildTarget")]
+        [MenuItem("Huatuo/CompileDll/ActiveBuildTarget")]
         public static void CompileDllActiveBuildTarget()
         {
             var target = EditorUserBuildSettings.activeBuildTarget;
             CompileDll(GetDllBuildOutputDirByTarget(target), target);
         }
 
-        [MenuItem("HuaTuo/CompileDll/Win64")]
+        [MenuItem("Huatuo/CompileDll/Win64")]
         public static void CompileDllWin64()
         {
             var target = BuildTarget.StandaloneWindows64;
             CompileDll(GetDllBuildOutputDirByTarget(target), target);
         }
 
-        [MenuItem("HuaTuo/CompileDll/Linux64")]
+        [MenuItem("Huatuo/CompileDll/Linux64")]
         public static void CompileDllLinux()
         {
             var target = BuildTarget.StandaloneLinux64;
             CompileDll(GetDllBuildOutputDirByTarget(target), target);
         }
 
-        [MenuItem("HuaTuo/CompileDll/OSX")]
+        [MenuItem("Huatuo/CompileDll/OSX")]
         public static void CompileDllOSX()
         {
             var target = BuildTarget.StandaloneOSX;
             CompileDll(GetDllBuildOutputDirByTarget(target), target);
         }
 
-        [MenuItem("HuaTuo/CompileDll/Android")]
+        [MenuItem("Huatuo/CompileDll/Android")]
         public static void CompileDllAndroid()
         {
             var target = BuildTarget.Android;
             CompileDll(GetDllBuildOutputDirByTarget(target), target);
         }
 
-        [MenuItem("HuaTuo/CompileDll/IOS")]
+        [MenuItem("Huatuo/CompileDll/IOS")]
         public static void CompileDllIOS()
         {
             //var target = EditorUserBuildSettings.activeBuildTarget;
@@ -115,8 +95,17 @@ namespace HuaTuo
             CompileDll(GetDllBuildOutputDirByTarget(target), target);
         }
 
+        public static string HuatuoBuildCacheDir => Application.dataPath + "/HuatuoBuildCache";
 
-        public static string AssetBundleOutputDir => Application.dataPath + "/HuaTuo/Output";
+        public static string AssetBundleOutputDir => $"{HuatuoBuildCacheDir}/AssetBundleOutput";
+
+        public static string AssetBundleSourceDataTempDir => $"{HuatuoBuildCacheDir}/AssetBundleSourceData";
+
+        public static string HuatuoDataDir => $"{Application.dataPath}/../HuatuoData";
+
+        public static string AssembliesPostIl2CppStripDir => $"{HuatuoDataDir}/AssembliesPostIl2CppStrip";
+
+        public static string MethodBridgeCppDir => $"{HuatuoDataDir}/LocalIl2CppData/il2cpp/libil2cpp/huatuo/interpreter";
 
         public static string GetAssetBundleOutputDirByTarget(BuildTarget target)
         {
@@ -125,7 +114,7 @@ namespace HuaTuo
 
         public static string GetAssetBundleTempDirByTarget(BuildTarget target)
         {
-            return $"{Application.dataPath}/HuaTuo/AssetBundleTemp/{target}";
+            return $"{AssetBundleSourceDataTempDir}/{target}";
         }
 
         /// <summary>
@@ -158,6 +147,26 @@ namespace HuaTuo
                 notSceneAssets.Add(dllBytesPath);
             }
 
+            var aotDlls = new string[]
+            {
+                "mscorlib.dll",
+                "System.dll",
+                "System.Core.dll", // 如果使用了Linq，需要这个
+            };
+
+            string aotDllDir = $"{AssembliesPostIl2CppStripDir}/{target}";
+            foreach (var dll in aotDlls)
+            {
+                string dllPath = $"{aotDllDir}/{dll}";
+                if(!File.Exists(dllPath))
+                {
+                    Debug.LogError($"ab中添加AOT补充元数据dll:{dllPath} 时发生错误,文件不存在。需要构建一次主包后才能生成裁剪后的AOT dll");
+                    continue;
+                }
+                string dllBytesPath = $"{tempDir}/{dll}.bytes";
+                File.Copy(dllPath, dllBytesPath, true);
+                notSceneAssets.Add(dllBytesPath);
+            }
 
             string testPrefab = $"{Application.dataPath}/Prefabs/HotUpdatePrefab.prefab";
             notSceneAssets.Add(testPrefab);
@@ -201,53 +210,63 @@ namespace HuaTuo
             }
         }
 
-        [MenuItem("HuaTuo/BuildBundles/ActiveBuildTarget")]
+        [MenuItem("Huatuo/BuildBundles/ActiveBuildTarget")]
         public static void BuildSeneAssetBundleActiveBuildTarget()
         {
             var target = EditorUserBuildSettings.activeBuildTarget;
             BuildAssetBundles(GetAssetBundleTempDirByTarget(target), GetAssetBundleOutputDirByTarget(target), target);
         }
 
-        [MenuItem("HuaTuo/BuildBundles/Win64")]
+        [MenuItem("Huatuo/BuildBundles/Win64")]
         public static void BuildSeneAssetBundleWin64()
         {
             var target = BuildTarget.StandaloneWindows64;
             BuildAssetBundles(GetAssetBundleTempDirByTarget(target), GetAssetBundleOutputDirByTarget(target), target);
         }
 
-        [MenuItem("HuaTuo/BuildBundles/OSX")]
+        [MenuItem("Huatuo/BuildBundles/OSX")]
         public static void BuildSeneAssetBundleOSX64()
         {
             var target = BuildTarget.StandaloneOSX;
             BuildAssetBundles(GetAssetBundleTempDirByTarget(target), GetAssetBundleOutputDirByTarget(target), target);
         }
 
-        [MenuItem("HuaTuo/BuildBundles/Linux64")]
+        [MenuItem("Huatuo/BuildBundles/Linux64")]
         public static void BuildSeneAssetBundleLinux64()
         {
             var target = BuildTarget.StandaloneLinux64;
             BuildAssetBundles(GetAssetBundleTempDirByTarget(target), GetAssetBundleOutputDirByTarget(target), target);
         }
 
-        [MenuItem("HuaTuo/BuildBundles/Android")]
+        [MenuItem("Huatuo/BuildBundles/Android")]
         public static void BuildSeneAssetBundleAndroid()
         {
             var target = BuildTarget.Android;
             BuildAssetBundles(GetAssetBundleTempDirByTarget(target), GetAssetBundleOutputDirByTarget(target), target);
         }
 
-        [MenuItem("HuaTuo/BuildBundles/IOS")]
+        [MenuItem("Huatuo/BuildBundles/IOS")]
         public static void BuildSeneAssetBundleIOS()
         {
             var target = BuildTarget.iOS;
             BuildAssetBundles(GetAssetBundleTempDirByTarget(target), GetAssetBundleOutputDirByTarget(target), target);
         }
-        
-        [MenuItem("HuaTuo/Generate/MethodBridge_X64")]
+
+        private static void CleanIl2CppBuildCache()
+        {
+            string il2cppBuildCachePath = $"{Application.dataPath}/../Library/Il2cppBuildCache";
+            if (!Directory.Exists(il2cppBuildCachePath))
+            {
+                return;
+            }
+            Debug.Log($"clean il2cpp build cache:{il2cppBuildCachePath}");
+            Directory.Delete(il2cppBuildCachePath, true);
+        }
+
+        [MenuItem("Huatuo/Generate/MethodBridge_X64")]
         public static void MethodBridge_X86()
         {
-            //var target = EditorUserBuildSettings.activeBuildTarget;
-            string outputFile = $"{Application.dataPath}/../Library/Huatuo/MethodBridge_x64.cpp";
+            string outputFile = $"{MethodBridgeCppDir}/MethodBridge_x64.cpp";
             var g = new MethodBridgeGenerator(new MethodBridgeGeneratorOptions()
             {
                 CallConvention = CallConventionType.X64,
@@ -258,12 +277,13 @@ namespace HuaTuo
             g.PrepareMethods();
             g.Generate();
             Debug.LogFormat("== output:{0} ==", outputFile);
+            CleanIl2CppBuildCache();
         }
 
-        [MenuItem("HuaTuo/Generate/MethodBridge_Arm64")]
+        [MenuItem("Huatuo/Generate/MethodBridge_Arm64")]
         public static void MethodBridge_Arm64()
         {
-            string outputFile = $"{Application.dataPath}/../Library/Huatuo/MethodBridge_arm64.cpp";
+            string outputFile = $"{MethodBridgeCppDir}/MethodBridge_arm64.cpp";
             var g = new MethodBridgeGenerator(new MethodBridgeGeneratorOptions()
             {
                 CallConvention = CallConventionType.Arm64,
@@ -274,6 +294,7 @@ namespace HuaTuo
             g.PrepareMethods();
             g.Generate();
             Debug.LogFormat("== output:{0} ==", outputFile);
+            CleanIl2CppBuildCache();
         }
     }
 }
