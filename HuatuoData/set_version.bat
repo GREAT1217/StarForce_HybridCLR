@@ -1,5 +1,5 @@
 ﻿
-set BRANCH=2021.3.1
+set BRANCH=2020.3.33
 
 cd il2cpp_huatuo_repo
 
