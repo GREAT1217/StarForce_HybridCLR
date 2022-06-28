@@ -16,7 +16,7 @@ using UnityEditor.Il2Cpp;
 using UnityEditor.Android;
 #endif
 
-namespace Huatuo
+namespace UnityEditor
 {
     public class BuildProcessor_2020_1_OR_NEWER : IPreprocessBuildWithReport
 #if UNITY_ANDROID

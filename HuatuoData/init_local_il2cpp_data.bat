@@ -1,7 +1,7 @@
-
+﻿
 
 rem replace with right Unity Editor Install path
-set IL2CPP_PATH=C:\Program Files\Unity\Hub\Editor\2020.3.33f1c2\Editor\Data\il2cpp
+set IL2CPP_PATH=C:\Software\UnityEditor\Unity 2020.3.33f1c2\Editor\Data\il2cpp
 
 if not exist "%IL2CPP_PATH%" (
     echo "please set correct %IL2CPP_PATH% value"

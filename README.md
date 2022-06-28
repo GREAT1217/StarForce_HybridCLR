@@ -4,6 +4,8 @@
 
 演示视频 - [bilibili](https://www.bilibili.com/video/BV1wB4y1Q7JK)
 
+![Huatuo编辑器工具](ReadMe/HuatuoBuilder.png)
+
 ![游戏流程图](ReadMe/Procedure.png)
 
 ## 相关链接
