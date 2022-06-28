@@ -75,7 +75,7 @@ namespace Huatuo.Generators
                 CallConventionType.Arm64 => "arm64",
                 _ => throw new NotSupportedException(),
             };
-            return $"{Application.dataPath}/Editor/Huatuo/Templates/MethodBridge_{tplFile}.cpp";
+            return $"{Application.dataPath}/Game/Scripts/Editor/Huatuo/Templates/MethodBridge_{tplFile}.cpp";
         }
 
         public IEnumerable<TypeGenInfo> GetGenerateTypes()
