@@ -24,7 +24,7 @@ namespace UnityEditor
 #else
         , IPostprocessBuildWithReport
 #endif
-        , IFilterBuildAssemblies, IPostBuildPlayerScriptDLLs, IUnityLinkerProcessor, IIl2CppProcessor
+        , IFilterBuildAssemblies, IPostBuildPlayerScriptDLLs, IUnityLinkerProcessor
     {
 
 #if !UNITY_IOS
@@ -161,19 +161,19 @@ namespace UnityEditor
 
         public void OnPostBuildPlayerScriptDLLs(BuildReport report)
         {
-            var projectProject = Path.GetFullPath(".");
-            //foreach (var name in s_copyDllName)
-            //{
-            //    var dllPath = Path.Combine(projectProject, "Temp", "StagingArea", "Data", "Managed", name);
-            //    if (File.Exists(dllPath))
-            //    {
-            //        File.Copy(dllPath, Path.Combine(projectProject, "Assets", "StreamingAssets", name), true);
-            //    }
-            //    else
-            //    {
-            //        Debug.LogWarning($"can not find the strip dll, path = {dllPath}");
-            //    }
-            //}
+            var target = report.summary.platform;
+            var projDir = Path.GetDirectoryName(Application.dataPath);
+            var dstPath = $"{projDir}/HuatuoData/AssembliesPostIl2CppStrip/{target}";
+
+            Directory.CreateDirectory(dstPath);
+
+            string srcStripDllPath = projDir + "/" + (target == BuildTarget.Android ?  "Temp/StagingArea/assets/bin/Data/Managed": "Temp/StagingArea/Data/Managed/");
+            foreach(var fileFullPath in Directory.GetFiles(srcStripDllPath, "*.dll"))
+            {
+                var file = Path.GetFileName(fileFullPath);
+                Debug.Log($"copy strip dll {fileFullPath} ==> {dstPath}/{file}");
+                File.Copy($"{fileFullPath}", $"{dstPath}/{file}", true);
+            }
         }
 
         public string GenerateAdditionalLinkXmlFile(BuildReport report, UnityLinkerBuildPipelineData data)
@@ -196,22 +196,22 @@ namespace UnityEditor
         {
         }
 
-        public void OnBeforeConvertRun(BuildReport report, Il2CppBuildPipelineData data)
-        {
-            var projDir = Path.GetDirectoryName(Application.dataPath);
-            var dstPath = $"{projDir}/HuatuoData/AssembliesPostIl2CppStrip/{data.target}";
-
-            Directory.CreateDirectory(dstPath);
-
-            string srcStripDllPath = projDir + "/" + (data.target == BuildTarget.Android ?  "Temp/StagingArea/assets/bin/Data/Managed": "Temp/StagingArea/Data/Managed/");
-
-            foreach(var fileFullPath in Directory.GetFiles(srcStripDllPath, "*.dll"))
-            {
-                var file = Path.GetFileName(fileFullPath);
-                Debug.Log($"copy strip dll {fileFullPath} ==> {dstPath}/{file}");
-                File.Copy($"{fileFullPath}", $"{dstPath}/{file}", true);
-            }
-        }
+        // public void OnBeforeConvertRun(BuildReport report, Il2CppBuildPipelineData data)
+        // {
+        //     var projDir = Path.GetDirectoryName(Application.dataPath);
+        //     var dstPath = $"{projDir}/HuatuoData/AssembliesPostIl2CppStrip/{data.target}";
+        //     
+        //     Directory.CreateDirectory(dstPath);
+        //     
+        //     string srcStripDllPath = projDir + "/" + (data.target == BuildTarget.Android ?  "Temp/StagingArea/assets/bin/Data/Managed": "Temp/StagingArea/Data/Managed/");
+        //     
+        //     foreach(var fileFullPath in Directory.GetFiles(srcStripDllPath, "*.dll"))
+        //     {
+        //         var file = Path.GetFileName(fileFullPath);
+        //         Debug.Log($"copy strip dll {fileFullPath} ==> {dstPath}/{file}");
+        //         File.Copy($"{fileFullPath}", $"{dstPath}/{file}", true);
+        //     }
+        // }
 
 
 #if   UNITY_IOS
