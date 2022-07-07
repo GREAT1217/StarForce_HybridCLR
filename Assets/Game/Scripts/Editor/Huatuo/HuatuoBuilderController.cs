@@ -105,7 +105,8 @@ namespace Game.Editor
 
         public void BuildHotfixDll(int platformIndex)
         {
-            BuildTarget buildTarget = GetBuildTarget((Platform)platformIndex);
+            Platform platform = (Platform)Enum.Parse(typeof(Platform), PlatformNames[platformIndex]);
+            BuildTarget buildTarget = GetBuildTarget(platform);
 
             // Build Hotfix Dll
             BuildTargetGroup group = BuildPipeline.GetBuildTargetGroup(buildTarget);
