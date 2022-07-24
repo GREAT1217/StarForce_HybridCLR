@@ -41,7 +41,12 @@ namespace HybridCLR.Editor.Builder
             }
         }
 
-        public string[] UnityVersionNames
+        public string[] VersionNames
+        {
+            get;
+        }
+        
+        public string[] VersionValues
         {
             get;
         }
@@ -58,7 +63,13 @@ namespace HybridCLR.Editor.Builder
 
             m_UnityInstallDirectory = EditorPrefs.GetString("UnityInstallDirectory");
 
-            UnityVersionNames = new[]
+            VersionNames = new[]
+            {
+                "2020.3.x",
+                "2021.3.x"
+            };
+            
+            VersionValues = new[]
             {
                 "2020.3.33",
                 "2021.3.1"
@@ -76,7 +87,7 @@ namespace HybridCLR.Editor.Builder
             }
 
             string command = File.ReadAllText(m_InitBatTemplate);
-            command = command.Replace("__VERSION__", UnityVersionNames[versionIndex]);
+            command = command.Replace("__VERSION__", VersionValues[versionIndex]);
             command = command.Replace("__PATH__", UnityInstallDirectory);
             File.WriteAllText(m_InitBatTemp, command);
 
