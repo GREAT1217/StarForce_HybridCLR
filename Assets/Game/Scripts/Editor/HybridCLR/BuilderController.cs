@@ -83,7 +83,7 @@ namespace HybridCLR.Editor.Builder
             RunProcess(m_InitBatTemp);
         }
 
-        public void BuildHotfixDll(int platformIndex)
+        public void CompileHotfixDll(int platformIndex)
         {
             Platform platform = (Platform)Enum.Parse(typeof(Platform), PlatformNames[platformIndex]);
             BuildTarget buildTarget = GetBuildTarget(platform);
@@ -128,14 +128,14 @@ namespace HybridCLR.Editor.Builder
             AssetDatabase.Refresh();
         }
 
-        public void MethodBridge_X32()
+        public void MethodBridge_General32()
         {
-            GenerateMethodBridgeCppFile(CallConventionType.Arm64, "MethodBridge_General32");
+            GenerateMethodBridgeCppFile(CallConventionType.General32, "MethodBridge_General32");
         }
 
-        public void MethodBridge_X64()
+        public void MethodBridge_General64()
         {
-            GenerateMethodBridgeCppFile(CallConventionType.Arm64, "MethodBridge_General32");
+            GenerateMethodBridgeCppFile(CallConventionType.General64, "MethodBridge_General64");
         }
 
         public void MethodBridge_Arm64()

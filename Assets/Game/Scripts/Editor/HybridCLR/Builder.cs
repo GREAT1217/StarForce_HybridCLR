@@ -36,9 +36,10 @@ namespace HybridCLR.Editor.Builder
             GUILayout.Space(5f);
             EditorGUILayout.LabelField("Build", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical("box");
-            m_BuildPlatformIndex = EditorGUILayout.Popup("Build Platform", m_BuildPlatformIndex, m_Controller.PlatformNames);
-            GUIItem("由于ab包依赖裁剪后的dll，因此首先需要build工程。", "Build", BuildPlayerWindow.ShowBuildPlayerWindow);
-            GUIItem("Build hotfix dll.", "Build", BuildHotfixDll);
+            GUIItem("由于ab包依赖裁剪后的dll，在编译hotfix.dl前需要build工程。", "Build", BuildPlayerWindow.ShowBuildPlayerWindow);
+            m_BuildPlatformIndex = EditorGUILayout.Popup("选择hotfix平台。", m_BuildPlatformIndex, m_Controller.PlatformNames);
+            GUIItem("编译hotfix.dll。", "Compile", CompileHotfixDll);
+            GUIResourcesTool();
             EditorGUILayout.EndVertical();
             
             GUILayout.Space(5f);
@@ -48,8 +49,8 @@ namespace HybridCLR.Editor.Builder
             EditorGUILayout.LabelField("相关代码文件为huatuo/interpreter/MethodBridge_{abi}.cpp，其中{abi}为x64或arm64。");
             EditorGUILayout.LabelField("实践项目中总会遇到一些aot函数的共享桥接函数不在默认桥接函数集中。");
             EditorGUILayout.LabelField("因此提供了Editor工具，根据程序集自动生成所有桥接函数。");
-            GUIItem("根据程序集自动生成所有桥接函数（x32）", "Generate", m_Controller.MethodBridge_X32);
-            GUIItem("根据程序集自动生成所有桥接函数（x64）", "Generate", m_Controller.MethodBridge_X64);
+            GUIItem("根据程序集自动生成所有桥接函数（General32）", "Generate", m_Controller.MethodBridge_General32);
+            GUIItem("根据程序集自动生成所有桥接函数（General64）", "Generate", m_Controller.MethodBridge_General64);
             GUIItem("根据程序集自动生成所有桥接函数（arm64）", "Generate", m_Controller.MethodBridge_Arm64);
             EditorGUILayout.EndVertical();
         }
@@ -80,14 +81,31 @@ namespace HybridCLR.Editor.Builder
             EditorGUILayout.EndHorizontal();
         }
 
+        private void GUIResourcesTool()
+        {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("编辑hotfix.dll等资源，并打包。");
+            if (GUILayout.Button("Editor", GUILayout.Width(100)))
+            {
+                EditorWindow window = GetWindow(Type.GetType("UnityGameFramework.Editor.ResourceTools.ResourceEditor,UnityGameFramework.Editor"));
+                window.Show();     
+            }
+            if (GUILayout.Button("Builder", GUILayout.Width(100)))
+            {
+                EditorWindow window = GetWindow(Type.GetType("UnityGameFramework.Editor.ResourceTools.ResourceBuilder,UnityGameFramework.Editor"));
+                window.Show();     
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
         private void InitHybridCLR()
         {
             m_Controller.InitHybridCLR(m_UnityVersionIndex);
         }
 
-        private void BuildHotfixDll()
+        private void CompileHotfixDll()
         {
-            m_Controller.BuildHotfixDll(m_BuildPlatformIndex);
+            m_Controller.CompileHotfixDll(m_BuildPlatformIndex);
         }
     }
 }
