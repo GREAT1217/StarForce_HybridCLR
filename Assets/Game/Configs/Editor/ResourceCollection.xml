@@ -146,6 +146,7 @@
       <Asset Guid="d9808401c68af274a8edfbed3d1b53c7" ResourceName="Meshes" />
       <Asset Guid="db58965402f12ed47b4dad61a9e48c9d" ResourceName="UI/UISprites/Icons" />
       <Asset Guid="e0792649e7774a24d8e7cceba0231c61" ResourceName="DataTables" />
+      <Asset Guid="e4f05c379043ec14ba19530a87da82d7" ResourceName="HotfixAOT" />
       <Asset Guid="e5ca26c53b6ab8a46b52817008d7c7fa" ResourceName="UI/UISprites/Icons" />
       <Asset Guid="e746957327956bb44a15025bc1a7c837" ResourceName="HotfixAOT" />
       <Asset Guid="e82837c9099f69a48b48fc44eb8d119d" ResourceName="UI/UISprites/Common" />

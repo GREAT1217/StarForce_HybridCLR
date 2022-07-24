@@ -4,8 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Hotfix;
+using GameFramework.Fsm;
+using GameFramework.Procedure;
 using UnityEngine;
-using Object = System.Object;
 
 namespace HybridCLR.Generators
 {
@@ -33,7 +35,16 @@ namespace HybridCLR.Generators
             return new List<Type>
             {
                 typeof(Action<int, string, Vector3>),
-                typeof(Action<byte, Object>),
+                typeof(IFsm<object>),
+                typeof(FsmState<object>),
+                typeof(IFsmManager),
+                typeof(ProcedureBase),
+                typeof(IProcedureManager),
+                typeof(Action<float, float>),
+                typeof(Action<IFsm<IProcedureManager>, float, float>),
+                typeof(Font),
+                typeof(HPBarComponent),
+                typeof(HPBarItem),
             };
         }
 
@@ -48,6 +59,13 @@ namespace HybridCLR.Generators
             {
                 "vi8i8",
                 "i4i8i8i8i4i1i8",
+                "vi8i1i8",
+                "S40i8",
+                "S16i8",
+                "vi8i4i8",
+                "vi8i8i4i8",
+                "i8i8i1i8i8",
+                "vi8i4i4",
             };
         }
 

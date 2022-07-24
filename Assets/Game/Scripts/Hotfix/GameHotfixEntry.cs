@@ -21,6 +21,7 @@ namespace Game.Hotfix
             "mscorlib.dll",
             "System.dll",
             "System.Core.dll", // 如果使用了Linq，需要这个
+            "UnityGameFramework.Runtime.dll"
             // "Newtonsoft.Json.dll",
             // "protobuf-net.dll",
             // "Google.Protobuf.dll",
@@ -34,6 +35,9 @@ namespace Game.Hotfix
 
         public static void Start()
         {
+            Debug.Log("start hotfix...");
+            StartHotfix();
+            return;
 #if UNITY_EDITOR
             StartHotfix();
 #else
@@ -48,13 +52,13 @@ namespace Game.Hotfix
 
             AOTFlag = AOTDllNames.Length;
             AOTLoadFlag = 0;
+Debug.Log("AOT===="+AOTFlag);
             for (int i = 0; i < AOTFlag; i++)
             {
                 string dllName = AOTDllNames[i];
                 string assetName = Utility.Text.Format("Assets/Game/Hotfix/{0}.bytes", dllName);
                 GameEntry.Resource.LoadAsset(assetName, new LoadAssetCallbacks(OnLoadAOTDllSuccess, OnLoadAssetFail));
             }
-
 #endif
         }
 

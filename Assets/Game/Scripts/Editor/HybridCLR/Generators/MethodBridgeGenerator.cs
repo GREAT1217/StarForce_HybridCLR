@@ -79,7 +79,7 @@ namespace HybridCLR.Generators
                 CallConventionType.Arm64 => "Arm64",
                 _ => throw new NotSupportedException(),
             };
-            return $"{Application.dataPath}/Game/Scripts/Editor/Huatuo/Generators/Templates/MethodBridge_{tplFile}.cpp";
+            return $"{Application.dataPath}/Game/Scripts/Editor/HybridCLR/Generators/Templates/MethodBridge_{tplFile}.cpp";
         }
 
         public IEnumerable<TypeGenInfo> GetGenerateTypes()
