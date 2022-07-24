@@ -92,7 +92,7 @@ namespace Game.Editor
                 return;
             }
 
-            if (platform != Platform.Windows)
+            if (platform != Platform.Windows && platform != Platform.Windows64)
             {
                 return;
             }
@@ -103,7 +103,7 @@ namespace Game.Editor
             {
                 string destFileName = Utility.Path.GetRegularPath(Path.Combine(streamingAssetsPath, fileName.Substring(outputPackagePath.Length)));
                 FileInfo destFileInfo = new FileInfo(destFileName);
-                if (!destFileInfo.Directory.Exists)
+                if (destFileInfo.Directory != null && !destFileInfo.Directory.Exists)
                 {
                     destFileInfo.Directory.Create();
                 }

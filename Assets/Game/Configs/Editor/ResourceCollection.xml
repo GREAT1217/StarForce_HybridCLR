@@ -6,6 +6,7 @@
       <Resource Name="DataTables" FileSystem="GameData" LoadType="0" Packed="True" ResourceGroups="Base" />
       <Resource Name="Entities" FileSystem="Resources" LoadType="0" Packed="True" />
       <Resource Name="Fonts" FileSystem="UI" LoadType="0" Packed="True" ResourceGroups="Base" />
+      <Resource Name="HotfixAOT" LoadType="0" Packed="False" />
       <Resource Name="HotfixCode" LoadType="0" Packed="False" />
       <Resource Name="HotfixGame" LoadType="0" Packed="False" />
       <Resource Name="Localization/Dictionaries" Variant="en-us" FileSystem="UI" LoadType="0" Packed="True" ResourceGroups="Base" />
@@ -99,7 +100,7 @@
       <Asset Guid="836be25be3e1e8c41ae5545bc8a9a4d7" ResourceName="Textures" />
       <Asset Guid="8940b037a9b441c4cbd3d2b446838424" ResourceName="Materials" />
       <Asset Guid="8b1acacd22538f34cb85287a0781ea5e" ResourceName="DataTables" />
-      <Asset Guid="8b75229d75321bf45b3f52aba8ffcb3b" ResourceName="HotfixCode" />
+      <Asset Guid="8b75229d75321bf45b3f52aba8ffcb3b" ResourceName="HotfixAOT" />
       <Asset Guid="8cf749fdfa5edc3478d16893efeaa0eb" ResourceName="Entities" />
       <Asset Guid="8e114ded6a865324588170636872943c" ResourceName="DataTables" />
       <Asset Guid="8e27380ee68aa4a219b4db9018e7da31" ResourceName="Materials" />
@@ -134,7 +135,7 @@
       <Asset Guid="baedbbad82997f445a8cb4da210404e0" ResourceName="Meshes" />
       <Asset Guid="bbfd75fe6fe00e1448fe988173ede7f9" ResourceName="UI/UIForms" />
       <Asset Guid="bf75b984df8a84987bcf3a8bf6e2862d" ResourceName="Sounds" />
-      <Asset Guid="c12a70ae48b604d4da46481b30a3bc8f" ResourceName="HotfixCode" />
+      <Asset Guid="c12a70ae48b604d4da46481b30a3bc8f" ResourceName="HotfixAOT" />
       <Asset Guid="c547624e174de984882f0a14b4bb32e1" ResourceName="Materials" />
       <Asset Guid="c58c9afddbd36d14d837fa218d772996" ResourceName="Materials" />
       <Asset Guid="c7d1e11dd37634b48a9dd4012b8e4306" ResourceName="UI/UISounds" />
@@ -146,7 +147,7 @@
       <Asset Guid="db58965402f12ed47b4dad61a9e48c9d" ResourceName="UI/UISprites/Icons" />
       <Asset Guid="e0792649e7774a24d8e7cceba0231c61" ResourceName="DataTables" />
       <Asset Guid="e5ca26c53b6ab8a46b52817008d7c7fa" ResourceName="UI/UISprites/Icons" />
-      <Asset Guid="e746957327956bb44a15025bc1a7c837" ResourceName="HotfixCode" />
+      <Asset Guid="e746957327956bb44a15025bc1a7c837" ResourceName="HotfixAOT" />
       <Asset Guid="e82837c9099f69a48b48fc44eb8d119d" ResourceName="UI/UISprites/Common" />
       <Asset Guid="e830964cdb85ff3429bca484c16bab44" ResourceName="UI/UISounds" />
       <Asset Guid="e85864330b68dde498dcb6e8711815d3" ResourceName="UI/UISprites/Common" />

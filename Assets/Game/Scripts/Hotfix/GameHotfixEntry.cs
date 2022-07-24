@@ -16,7 +16,8 @@ namespace Game.Hotfix
             private set;
         }
 
-        public static readonly string[] AOTDllNames = {
+        public static readonly string[] AOTDllNames =
+        {
             "mscorlib.dll",
             "System.dll",
             "System.Core.dll", // 如果使用了Linq，需要这个
@@ -45,15 +46,14 @@ namespace Game.Hotfix
             // 注意，补充元数据是给AOT dll补充元数据，而不是给热更新dll补充元数据。
             // 热更新dll不缺元数据，不需要补充，如果调用LoadMetadataForAOTAssembly会返回错误。
 
-            // AOTFlag = AOTDllNames.Length;
-            // AOTLoadFlag = 0;
-            // for (int i = 0; i < AOTFlag; i++)
-            // {
-            //     string dllName = AOTDllNames[i];
-            //     string assetName = Utility.Text.Format("Assets/Game/Hotfix/{0}.bytes", dllName);
-            //     GameEntry.Resource.LoadAsset(assetName, new LoadAssetCallbacks(OnLoadAOTDllSuccess, OnLoadAssetFail));
-            // }
-                        StartHotfix();
+            AOTFlag = AOTDllNames.Length;
+            AOTLoadFlag = 0;
+            for (int i = 0; i < AOTFlag; i++)
+            {
+                string dllName = AOTDllNames[i];
+                string assetName = Utility.Text.Format("Assets/Game/Hotfix/{0}.bytes", dllName);
+                GameEntry.Resource.LoadAsset(assetName, new LoadAssetCallbacks(OnLoadAOTDllSuccess, OnLoadAssetFail));
+            }
 
 #endif
         }
@@ -87,7 +87,7 @@ namespace Game.Hotfix
             fixed (byte* ptr = dllBytes)
             {
                 // 加载assembly对应的dll，会自动为它hook。一旦aot泛型函数的native函数不存在，用解释器版本代码
-                int err = Huatuo.HuatuoApi.LoadMetadataForAOTAssembly((IntPtr)ptr, dllBytes.Length);
+                int err = HybridCLR.RuntimeApi.LoadMetadataForAOTAssembly((IntPtr)ptr, dllBytes.Length);
                 Log.Info($"LoadMetadataForAOTAssembly:{assetName}. ret:{err}");
             }
             AOTLoadFlag++;
