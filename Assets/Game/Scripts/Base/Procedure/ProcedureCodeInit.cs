@@ -51,7 +51,6 @@ namespace Game
 
             AOTFlag = AOTDllNames.Length;
             AOTLoadFlag = 0;
-            Debug.Log("AOT====" + AOTFlag);
             for (int i = 0; i < AOTFlag; i++)
             {
                 string dllAssetName = Utility.Text.Format("Assets/Game/Hotfix/{0}.bytes", AOTDllNames[i]);

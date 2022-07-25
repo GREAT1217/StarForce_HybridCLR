@@ -4,10 +4,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Game;
 using Game.Hotfix;
 using GameFramework.Fsm;
 using GameFramework.Procedure;
+using GameFramework.Resource;
 using UnityEngine;
+using UnityGameFramework.Runtime;
 
 namespace HybridCLR.Generators
 {
@@ -35,16 +38,33 @@ namespace HybridCLR.Generators
             return new List<Type>
             {
                 typeof(Action<int, string, Vector3>),
-                typeof(IFsm<object>),
-                typeof(FsmState<object>),
-                typeof(IFsmManager),
-                typeof(ProcedureBase),
-                typeof(IProcedureManager),
-                typeof(Action<float, float>),
-                typeof(Action<IFsm<IProcedureManager>, float, float>),
-                typeof(Font),
-                typeof(HPBarComponent),
-                typeof(HPBarItem),
+
+                typeof(BaseComponent),
+                typeof(ConfigComponent),
+                typeof(DataNodeComponent),
+                typeof(DataTableComponent),
+                typeof(DebuggerComponent),
+                typeof(DownloadComponent),
+                typeof(EntityComponent),
+                typeof(EventComponent),
+                typeof(FileSystemComponent),
+                typeof(FsmComponent),
+                typeof(LocalizationComponent),
+                typeof(NetworkComponent),
+                typeof(ObjectPoolComponent),
+                typeof(ProcedureComponent),
+                typeof(ResourceComponent),
+                typeof(SceneComponent),
+                typeof(SettingComponent),
+                typeof(SoundComponent),
+                typeof(SoundComponent),
+                typeof(UIComponent),
+                typeof(WebRequestComponent),
+                typeof(BuiltinDataComponent),
+                typeof(Log),
+
+                typeof(Dictionary<KeyValuePair<CampType, CampType>, RelationType>),
+                typeof(Dictionary<KeyValuePair<CampType, RelationType>, CampType[]>),
             };
         }
 
@@ -66,6 +86,11 @@ namespace HybridCLR.Generators
                 "vi8i8i4i8",
                 "i8i8i1i8i8",
                 "vi8i4i4",
+                "vi8i1",
+                "i4i8i8i8i4i8i8i8",
+                "i8i1",
+                "S24i8",
+                "i1i8S2i8"
             };
         }
 

@@ -21,11 +21,11 @@
       <Resource Name="Scenes" FileSystem="Resources" LoadType="0" Packed="True" />
       <Resource Name="Sounds" FileSystem="Resources" LoadType="0" Packed="True" />
       <Resource Name="Textures" FileSystem="Resources" LoadType="0" Packed="True" />
-      <Resource Name="UI/UIForms" FileSystem="UI" LoadType="0" Packed="True" />
-      <Resource Name="UI/UISounds" FileSystem="UI" LoadType="0" Packed="True" />
-      <Resource Name="UI/UISprites/Common" FileSystem="UI" LoadType="0" Packed="True" />
-      <Resource Name="UI/UISprites/Icons" FileSystem="UI" LoadType="0" Packed="True" />
-      <Resource Name="UI/UISprites/Logos" FileSystem="UI" LoadType="0" Packed="True" />
+      <Resource Name="UI/UIForms" FileSystem="UI" LoadType="0" Packed="False" />
+      <Resource Name="UI/UISounds" FileSystem="UI" LoadType="0" Packed="False" />
+      <Resource Name="UI/UISprites/Common" FileSystem="UI" LoadType="0" Packed="False" />
+      <Resource Name="UI/UISprites/Icons" FileSystem="UI" LoadType="0" Packed="False" />
+      <Resource Name="UI/UISprites/Logos" FileSystem="UI" LoadType="0" Packed="False" />
     </Resources>
     <Assets>
       <Asset Guid="0179316b5fc7c2946a67c5877c02fc30" ResourceName="UI/UISprites/Common" />
