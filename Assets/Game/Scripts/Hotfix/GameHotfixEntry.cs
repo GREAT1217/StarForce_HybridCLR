@@ -8,14 +8,8 @@ using UnityGameFramework.Runtime;
 
 namespace Game.Hotfix
 {
-    public class GameHotfixEntry
+    public static class GameHotfixEntry
     {
-        public static HPBarComponent HPBar
-        {
-            get;
-            private set;
-        }
-
         public static readonly string[] AOTDllNames =
         {
             "mscorlib.dll",
@@ -33,11 +27,14 @@ namespace Game.Hotfix
         private static int AOTFlag;
         private static int AOTLoadFlag;
 
+        public static HPBarComponent HPBar
+        {
+            get;
+            private set;
+        }
+
         public static void Start()
         {
-            Debug.Log("start hotfix...");
-            StartHotfix();
-            return;
 #if UNITY_EDITOR
             StartHotfix();
 #else
@@ -45,14 +42,13 @@ namespace Game.Hotfix
             // 一旦加载后，如果AOT泛型函数对应native实现不存在，则自动替换为解释模式执行。
 
             // 可以加载任意aot assembly的对应的dll。但要求dll必须与unity build过程中生成的裁剪后的dll一致，而不能直接使用原始dll。
-            // 我们在Huatuo_BuildProcessor_xxx里添加了处理代码，这些裁剪后的dll在打包时自动被复制到 {项目目录}/HuatuoData/AssembliesPostIl2CppStrip/{Target} 目录。
+            // 我们在HybridCLR_BuildProcessor_xxx里添加了处理代码，这些裁剪后的dll在打包时自动被复制到 {项目目录}/HybridCLRData/AssembliesPostIl2CppStrip/{Target} 目录。
 
             // 注意，补充元数据是给AOT dll补充元数据，而不是给热更新dll补充元数据。
             // 热更新dll不缺元数据，不需要补充，如果调用LoadMetadataForAOTAssembly会返回错误。
 
             AOTFlag = AOTDllNames.Length;
             AOTLoadFlag = 0;
-Debug.Log("AOT===="+AOTFlag);
             for (int i = 0; i < AOTFlag; i++)
             {
                 string dllName = AOTDllNames[i];
@@ -86,13 +82,13 @@ Debug.Log("AOT===="+AOTFlag);
 
         private static unsafe void OnLoadAOTDllSuccess(string assetName, object asset, float duration, object userdata)
         {
-            TextAsset dll = (TextAsset)asset;
+            TextAsset dll = (TextAsset) asset;
             byte[] dllBytes = dll.bytes;
             fixed (byte* ptr = dllBytes)
             {
                 // 加载assembly对应的dll，会自动为它hook。一旦aot泛型函数的native函数不存在，用解释器版本代码
-                int err = HybridCLR.RuntimeApi.LoadMetadataForAOTAssembly((IntPtr)ptr, dllBytes.Length);
-                Log.Info($"LoadMetadataForAOTAssembly:{assetName}. ret:{err}");
+                int err = HybridCLR.RuntimeApi.LoadMetadataForAOTAssembly((IntPtr) ptr, dllBytes.Length);
+                Log.Info(string.Format("LoadMetadataForAOTAssembly:{0}. ret:{1}", assetName, err));
             }
             AOTLoadFlag++;
             if (AOTLoadFlag == AOTFlag)
@@ -103,7 +99,7 @@ Debug.Log("AOT===="+AOTFlag);
 
         private static void OnLoadAssetSuccess(string assetName, object asset, float duration, object userdata)
         {
-            GameObject game = UnityEngine.Object.Instantiate((GameObject)asset);
+            GameObject game = UnityEngine.Object.Instantiate((GameObject) asset);
             game.name = "Game";
 
             HPBar = game.GetComponentInChildren<HPBarComponent>();

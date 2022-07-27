@@ -45,7 +45,7 @@ namespace HybridCLR.Editor.Builder
         {
             get;
         }
-        
+
         public string[] VersionValues
         {
             get;
@@ -68,7 +68,7 @@ namespace HybridCLR.Editor.Builder
                 "2020.3.x",
                 "2021.3.x"
             };
-            
+
             VersionValues = new[]
             {
                 "2020.3.33",
@@ -77,6 +77,8 @@ namespace HybridCLR.Editor.Builder
 
             PlatformNames = Enum.GetNames(typeof(Platform));
         }
+
+        #region InitHybridCLR
 
         public void InitHybridCLR(int versionIndex)
         {
@@ -94,9 +96,25 @@ namespace HybridCLR.Editor.Builder
             RunProcess(m_InitBatTemp);
         }
 
+        private void RunProcess(string fileName)
+        {
+            using (Process p = new Process())
+            {
+                p.StartInfo.WorkingDirectory = Application.dataPath + "/../HybridCLRData";
+                p.StartInfo.FileName = fileName;
+                p.StartInfo.UseShellExecute = true;
+                p.Start();
+                p.WaitForExit();
+            }
+        }
+
+        #endregion
+
+        #region CompoileDll
+
         public void CompileHotfixDll(int platformIndex)
         {
-            Platform platform = (Platform)Enum.Parse(typeof(Platform), PlatformNames[platformIndex]);
+            Platform platform = (Platform) Enum.Parse(typeof(Platform), PlatformNames[platformIndex]);
             BuildTarget buildTarget = GetBuildTarget(platform);
 
             // Build Hotfix Dll
@@ -138,6 +156,46 @@ namespace HybridCLR.Editor.Builder
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
+
+        private BuildTarget GetBuildTarget(Platform platform)
+        {
+            switch (platform)
+            {
+                case Platform.Windows:
+                    return BuildTarget.StandaloneWindows;
+
+                case Platform.Windows64:
+                    return BuildTarget.StandaloneWindows64;
+
+                case Platform.MacOS:
+#if UNITY_2017_3_OR_NEWER
+                    return BuildTarget.StandaloneOSX;
+#else
+                    return BuildTarget.StandaloneOSXUniversal;
+#endif
+                case Platform.Linux:
+                    return BuildTarget.StandaloneLinux64;
+
+                case Platform.IOS:
+                    return BuildTarget.iOS;
+
+                case Platform.Android:
+                    return BuildTarget.Android;
+
+                case Platform.WindowsStore:
+                    return BuildTarget.WSAPlayer;
+
+                case Platform.WebGL:
+                    return BuildTarget.WebGL;
+
+                default:
+                    throw new GameFrameworkException("Platform is invalid.");
+            }
+        }
+
+        #endregion
+
+        #region MethodBridge
 
         public void MethodBridge_General32()
         {
@@ -194,13 +252,10 @@ namespace HybridCLR.Editor.Builder
             {
                 allAssByName[ass.GetName().Name] = ass;
             }
-            //CompileDllHelper.CompileDllActiveBuildTarget();
 
             var rootAssemblies = BuildConfig.AllHotUpdateDllNames
                 .Select(dll => Path.GetFileNameWithoutExtension(dll)).Concat(GeneratorConfig.GetExtraAssembiles())
                 .Where(name => allAssByName.ContainsKey(name)).Select(name => allAssByName[name]).ToList();
-            //var rootAssemblies = GeneratorConfig.GetExtraAssembiles()
-            //    .Where(name => allAssByName.ContainsKey(name)).Select(name => allAssByName[name]).ToList();
             CollectDependentAssemblies(allAssByName, rootAssemblies);
             rootAssemblies.Sort((a, b) => a.GetName().Name.CompareTo(b.GetName().Name));
             Debug.Log($"assembly count:{rootAssemblies.Count}");
@@ -227,52 +282,6 @@ namespace HybridCLR.Editor.Builder
             CleanIl2CppBuildCache();
         }
 
-        private void RunProcess(string fileName)
-        {
-            using (Process p = new Process())
-            {
-                p.StartInfo.WorkingDirectory = Application.dataPath + "/../HybridCLRData";
-                p.StartInfo.FileName = fileName;
-                p.StartInfo.UseShellExecute = true;
-                p.Start();
-                p.WaitForExit();
-            }
-        }
-
-        private BuildTarget GetBuildTarget(Platform platform)
-        {
-            switch (platform)
-            {
-                case Platform.Windows:
-                    return BuildTarget.StandaloneWindows;
-
-                case Platform.Windows64:
-                    return BuildTarget.StandaloneWindows64;
-
-                case Platform.MacOS:
-#if UNITY_2017_3_OR_NEWER
-                    return BuildTarget.StandaloneOSX;
-#else
-                    return BuildTarget.StandaloneOSXUniversal;
-#endif
-                case Platform.Linux:
-                    return BuildTarget.StandaloneLinux64;
-
-                case Platform.IOS:
-                    return BuildTarget.iOS;
-
-                case Platform.Android:
-                    return BuildTarget.Android;
-
-                case Platform.WindowsStore:
-                    return BuildTarget.WSAPlayer;
-
-                case Platform.WebGL:
-                    return BuildTarget.WebGL;
-
-                default:
-                    throw new GameFrameworkException("Platform is invalid.");
-            }
-        }
+        #endregion
     }
 }

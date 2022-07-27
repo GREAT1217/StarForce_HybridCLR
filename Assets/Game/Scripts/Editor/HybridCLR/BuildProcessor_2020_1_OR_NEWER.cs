@@ -1,35 +1,35 @@
-﻿#if UNITY_2020_1_OR_NEWER
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
+using System.IO;
+using System.Linq;
+using HybridCLR.Editor.Builder;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Linq;
-using System.IO;
-using System;
-using UnityEditor.UnityLinker;
-using System.Reflection;
 using UnityEditor.Il2Cpp;
-#if UNITY_ANDROID
-using UnityEditor.Android;
+using UnityEditor.UnityLinker;
+using UnityEngine;
+
+namespace UnityEditor
+{
+    public class BuildProcessor_2020_1_OR_NEWER : IPreprocessBuildWithReport, IFilterBuildAssemblies, IPostBuildPlayerScriptDLLs, IUnityLinkerProcessor
+#if !UNITY_2021_1_OR_NEWER
+        , IIl2CppProcessor
 #endif
 
-namespace HybridCLR
-{
-    public class BuildProcessor_2020_1_OR_NEWER : IPreprocessBuildWithReport
 #if UNITY_ANDROID
         , IPostGenerateGradleAndroidProject
 #else
         , IPostprocessBuildWithReport
 #endif
-        , IFilterBuildAssemblies, IPostBuildPlayerScriptDLLs, IUnityLinkerProcessor
-#if !UNITY_2021_1_OR_NEWER
-    , IIl2CppProcessor
-#endif
+
     {
-        public int callbackOrder => 0;
+        public int callbackOrder
+        {
+            get
+            {
+                return 0;
+            }
+        }
 
         public string[] OnFilterAssemblies(BuildOptions buildOptions, string[] assemblies)
         {
@@ -37,9 +37,8 @@ namespace HybridCLR
             return assemblies.Where(ass => BuildConfig.AllHotUpdateDllNames.All(dll => !ass.EndsWith(dll, StringComparison.OrdinalIgnoreCase))).ToArray();
         }
 
-
         [Serializable]
-        private class ScriptingAssemblies
+        public class ScriptingAssemblies
         {
             public List<string> names;
             public List<int> types;
@@ -56,11 +55,10 @@ namespace HybridCLR
         public void OnPostprocessBuild(BuildReport report)
         {
 #if !UNITY_ANDROID
-
             AddBackHotFixAssembliesToJson(report, report.summary.outputPath);
 #endif
         }
-        
+
         private void AddBackHotFixAssembliesToJson(BuildReport report, string path)
         {
             /*
@@ -68,11 +66,18 @@ namespace HybridCLR
              * 不在此列表中的dll在资源反序列化时无法被找到其类型
              * 因此 OnFilterAssemblies 中移除的条目需要再加回来
              */
-            string[] jsonFiles = Directory.GetFiles(Path.GetDirectoryName(path), BuildConfig.ScriptingAssembliesJsonFile, SearchOption.AllDirectories);
+            string directoryName = Path.GetDirectoryName(path);
+            if (string.IsNullOrEmpty(directoryName))
+            {
+                Debug.LogErrorFormat("ScriptingAssemblies.json path is invalid: {0}", path);
+                return;
+            }
+
+            string[] jsonFiles = Directory.GetFiles(directoryName, "ScriptingAssemblies.json", SearchOption.AllDirectories);
 
             if (jsonFiles.Length == 0)
             {
-                Debug.LogError($"can not find file {BuildConfig.ScriptingAssembliesJsonFile}");
+                Debug.LogError("Can not find file ScriptingAssemblies.json");
                 return;
             }
 
@@ -82,24 +87,23 @@ namespace HybridCLR
                 ScriptingAssemblies scriptingAssemblies = JsonUtility.FromJson<ScriptingAssemblies>(content);
                 foreach (string name in BuildConfig.MonoHotUpdateDllNames)
                 {
-                    if(!scriptingAssemblies.names.Contains(name))
+                    if (!scriptingAssemblies.names.Contains(name))
                     {
                         scriptingAssemblies.names.Add(name);
                         scriptingAssemblies.types.Add(16); // user dll type
                     }
                 }
                 content = JsonUtility.ToJson(scriptingAssemblies);
-
                 File.WriteAllText(file, content);
-                Debug.Log($"============= Update ScriptingAssemblies.json:{file}");
+                Debug.LogFormat("Update ScriptingAssemblies.json: {0}", file);
             }
         }
 
         public void OnPostBuildPlayerScriptDLLs(BuildReport report)
         {
 #if UNITY_2021_1_OR_NEWER
-            BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
-            CopyStripDlls(target);
+            var buildTarget = report.summary.platform;
+            CopyStripDlls(buildTarget);
 #endif
         }
 
@@ -113,16 +117,15 @@ namespace HybridCLR
         private void CopyStripDlls(BuildTarget target)
         {
             var dstPath = BuildConfig.GetAssembliesPostIl2CppStripDir(target);
-
             Directory.CreateDirectory(dstPath);
 
             string srcStripDllPath = BuildConfig.GetOriginBuildStripAssembliesDir(target);
-
             foreach (var fileFullPath in Directory.GetFiles(srcStripDllPath, "*.dll"))
             {
                 var file = Path.GetFileName(fileFullPath);
-                Debug.Log($"copy strip dll {fileFullPath} ==> {dstPath}/{file}");
-                File.Copy($"{fileFullPath}", $"{dstPath}/{file}", true);
+                var destFile = string.Format("{0}/{1}", dstPath, file);
+                File.Copy(fileFullPath, destFile, true);
+                Debug.LogFormat("Copy strip dll {0} ==> {1}", fileFullPath, destFile);
             }
         }
 
@@ -130,12 +133,10 @@ namespace HybridCLR
 
         private static void BuildExceptionEventHandler(object sender, UnhandledExceptionEventArgs e)
         {
-
         }
 
         public void OnPreprocessBuild(BuildReport report)
         {
-
         }
 
         public string GenerateAdditionalLinkXmlFile(BuildReport report, UnityLinkerBuildPipelineData data)
@@ -145,19 +146,16 @@ namespace HybridCLR
 
         public void OnBeforeRun(BuildReport report, UnityLinkerBuildPipelineData data)
         {
-
         }
 
         public void OnAfterRun(BuildReport report, UnityLinkerBuildPipelineData data)
         {
         }
 
-
 #if UNITY_IOS
     // hook UnityEditor.BuildCompletionEventsHandler.ReportPostBuildCompletionInfo() ? 因为没有 mac 打包平台因此不清楚
 #endif
+
         #endregion
     }
-
 }
-#endif

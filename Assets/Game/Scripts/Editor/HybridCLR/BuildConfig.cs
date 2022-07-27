@@ -2,29 +2,29 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
-namespace HybridCLR
+namespace HybridCLR.Editor.Builder
 {
     public static class BuildConfig
     {
+        public const string LocalIl2CppDir = "HybridCLRData/LocalIl2CppData/il2cpp";
+        public const string HotFixDllsOutputDir = "HybridCLRData/HotFixDlls";
+        public const string AssembliesPostIl2CppStripDir = "HybridCLRData/AssembliesPostIl2CppStrip";
+        public const string MethodBridgeCppDir = "HybridCLRData/libil2cpp/huatuo/interpreter";
+
 #if !UNITY_IOS
         [InitializeOnLoadMethod]
         private static void Setup()
         {
-            ///
-            /// unity允许使用UNITY_IL2CPP_PATH环境变量指定il2cpp的位置，因此我们不再直接修改安装位置的il2cpp，
-            /// 而是在本地目录
-            ///
-            var localIl2cppDir = LocalIl2CppDir;
-            if (!Directory.Exists(localIl2cppDir))
+            // unity允许使用UNITY_IL2CPP_PATH环境变量指定il2cpp的位置，因此我们不再直接修改安装位置的il2cpp， 而是在本地目录
+            if (!Directory.Exists(LocalIl2CppDir))
             {
-                Debug.LogError($"本地il2cpp目录:{localIl2cppDir} 不存在，未安装本地il2cpp。请手动执行一次 {BuildConfig.HybridCLRDataDir} 目录下的 init_local_il2cpp_data.bat 或者 init_local_il2cpp_data.sh 文件");
+                Debug.LogErrorFormat("本地il2cpp目录:{0} 不存在，未安装本地il2cpp。请使用'HybridCLR/HybridCLR Builder'安装。", LocalIl2CppDir);
+                return;
             }
-            Environment.SetEnvironmentVariable("UNITY_IL2CPP_PATH", localIl2cppDir);
+            Environment.SetEnvironmentVariable("UNITY_IL2CPP_PATH", LocalIl2CppDir);
         }
 #endif
 
@@ -37,78 +37,46 @@ namespace HybridCLR
         /// 注意：多热更新dll不是必须的！大多数项目完全可以只有HotFix.dll这一个热更新模块,纯粹出于演示才故意设计了两个热更新模块。
         /// 另外，是否热更新跟dll名毫无关系，凡是不打包到主工程的，都可以是热更新dll。
         /// </summary>
-        public static List<string> MonoHotUpdateDllNames { get; } = new List<string>()
+        public static List<string> MonoHotUpdateDllNames
         {
-            "Game.Hotfix.dll",
-        };
+            get
+            {
+                return new List<string>()
+                {
+                    // "HotFix.dll",
+                    "Game.Hotfix.dll",
+                };
+            }
+        }
 
         /// <summary>
         /// 所有热更新dll列表。放到此列表中的dll在打包时OnFilterAssemblies回调中被过滤。
+        /// 这里放除了MonoHotUpdateDllNames以外的脚本不需要挂到资源上的dll列表。
         /// </summary>
-        public static List<string> AllHotUpdateDllNames { get; } = MonoHotUpdateDllNames.Concat(new List<string>
+        public static List<string> AllHotUpdateDllNames
         {
-            // 这里放除了s_monoHotUpdateDllNames以外的脚本不需要挂到资源上的dll列表
-            //"HotFix2.dll",
-        }).ToList();
-
-        public static List<string> AOTMetaDlls { get; } = new List<string>()
-        {
-            "mscorlib.dll",
-            "System.dll",
-            "System.Core.dll", // 如果使用了Linq，需要这个
-        };
-
-        public static List<string> AssetBundleFiles { get; } = new List<string>
-        {
-            "common",
-        };
-
-        public static string ProjectDir => Directory.GetParent(Application.dataPath).ToString();
-
-        public static string ScriptingAssembliesJsonFile { get; } = "ScriptingAssemblies.json";
-
-        public static string HybridCLRBuildCacheDir => Application.dataPath + "/HybridCLRBuildCache";
-
-        public static string HotFixDllsOutputDir => $"{HybridCLRDataDir}/HotFixDlls";
-
-        public static string AssetBundleOutputDir => $"{HybridCLRBuildCacheDir}/AssetBundleOutput";
-
-        public static string AssetBundleSourceDataTempDir => $"{HybridCLRBuildCacheDir}/AssetBundleSourceData";
-
-        public static string HybridCLRDataDir { get; } = $"{ProjectDir}/HybridCLRData";
-
-        public static string AssembliesPostIl2CppStripDir => $"{HybridCLRDataDir}/AssembliesPostIl2CppStrip";
-
-        public static string LocalIl2CppDir => $"{HybridCLRDataDir}/LocalIl2CppData/il2cpp";
-
-        public static string MethodBridgeCppDir => $"{LocalIl2CppDir}/libil2cpp/huatuo/interpreter";
-
-        public static string Il2CppBuildCacheDir { get; } = $"{ProjectDir}/Library/Il2cppBuildCache";
+            get
+            {
+                return MonoHotUpdateDllNames.Concat(new List<string>
+                {
+                    // "HotFix2.dll",
+                }).ToList();
+            }
+        }
 
         public static string GetHotFixDllsOutputDirByTarget(BuildTarget target)
         {
-            return $"{HotFixDllsOutputDir}/{target}";
+            return string.Format("{0}/{1}", HotFixDllsOutputDir, target);
         }
 
         public static string GetAssembliesPostIl2CppStripDir(BuildTarget target)
         {
-            return $"{AssembliesPostIl2CppStripDir}/{target}";
+            return string.Format("{0}/{1}", AssembliesPostIl2CppStripDir, target);
         }
 
         public static string GetOriginBuildStripAssembliesDir(BuildTarget target)
         {
-            return ProjectDir + "/" + (target == BuildTarget.Android ? "Temp/StagingArea/assets/bin/Data/Managed" : "Temp/StagingArea/Data/Managed/");
+            return target == BuildTarget.Android ? "Temp/StagingArea/assets/bin/Data/Managed" : "Temp/StagingArea/Data/Managed/";
         }
-
-        public static string GetAssetBundleOutputDirByTarget(BuildTarget target)
-        {
-            return $"{AssetBundleOutputDir}/{target}";
-        }
-
-        public static string GetAssetBundleTempDirByTarget(BuildTarget target)
-        {
-            return $"{AssetBundleSourceDataTempDir}/{target}";
-        }
-
     }
 }
