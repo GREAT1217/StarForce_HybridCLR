@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace UnityEditor
 {
-    public class BuildProcessor_2020_1_OR_NEWER : IPreprocessBuildWithReport, IFilterBuildAssemblies, IPostBuildPlayerScriptDLLs, IUnityLinkerProcessor
+    public class BuildProcessor_2020_1_OR_NEWER : IPreprocessBuildWithReport, IFilterBuildAssemblies, IUnityLinkerProcessor
 #if !UNITY_2021_1_OR_NEWER
         , IIl2CppProcessor
 #endif
@@ -57,6 +57,11 @@ namespace UnityEditor
 #if !UNITY_ANDROID
             AddBackHotFixAssembliesToJson(report, report.summary.outputPath);
 #endif
+            // Unity 2021开始，不再清理这个Temp目录，因此在这个时机复制较为合适
+#if UNITY_2021_1_OR_NEWER
+            BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
+            CopyStripDlls(target);
+#endif
         }
 
         private void AddBackHotFixAssembliesToJson(BuildReport report, string path)
@@ -99,19 +104,9 @@ namespace UnityEditor
             }
         }
 
-        public void OnPostBuildPlayerScriptDLLs(BuildReport report)
-        {
-#if UNITY_2021_1_OR_NEWER
-            var buildTarget = report.summary.platform;
-            CopyStripDlls(buildTarget);
-#endif
-        }
-
         public void OnBeforeConvertRun(BuildReport report, Il2CppBuildPipelineData data)
         {
-#if !UNITY_2021_1_OR_NEWER
             CopyStripDlls(data.target);
-#endif
         }
 
         private void CopyStripDlls(BuildTarget target)

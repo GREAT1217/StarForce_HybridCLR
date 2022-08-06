@@ -82,12 +82,12 @@ namespace HybridCLR.Editor.Builder
             EditorGUILayout.LabelField("Method Bridge", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical("box");
             EditorGUILayout.LabelField("HybridCLR已经扫描过Unity核心库和常见的第三方库生成了默认的桥接函数集。");
-            EditorGUILayout.LabelField("相关代码文件为huatuo/interpreter/MethodBridge_{abi}.cpp，其中{abi}为General32、General64或arm64。");
+            EditorGUILayout.LabelField("相关代码文件为hybridclr/interpreter/MethodBridge_{abi}.cpp，其中{abi}Universal32、Universal64、Arm64。");
             EditorGUILayout.LabelField("实践项目中总会遇到一些aot函数的共享桥接函数不在默认桥接函数集中。");
             EditorGUILayout.LabelField("因此提供了Editor工具，根据程序集自动生成所有桥接函数。");
-            GUIItem("根据程序集自动生成所有桥接函数（General32）", "Generate", m_Controller.MethodBridge_General32);
-            GUIItem("根据程序集自动生成所有桥接函数（General64）", "Generate", m_Controller.MethodBridge_General64);
-            GUIItem("根据程序集自动生成所有桥接函数（arm64）", "Generate", m_Controller.MethodBridge_Arm64);
+            GUIItem("根据程序集自动生成所有桥接函数（Universal32）", "Generate", m_Controller.MethodBridge_Universal32);
+            GUIItem("根据程序集自动生成所有桥接函数（Universal64）", "Generate", m_Controller.MethodBridge_Universal64);
+            GUIItem("根据程序集自动生成所有桥接函数（Arm64）", "Generate", m_Controller.MethodBridge_Arm64);
             EditorGUILayout.EndVertical();
         }
 

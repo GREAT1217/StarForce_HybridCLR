@@ -8,6 +8,7 @@ using Game.Editor;
 using Game.Hotfix;
 using GameFramework;
 using HybridCLR.Generators;
+using HybridCLR.Generators.MethodBridge;
 using UnityEditor;
 using UnityEditor.Build.Player;
 using UnityEngine;
@@ -197,19 +198,19 @@ namespace HybridCLR.Editor.Builder
 
         #region MethodBridge
 
-        public void MethodBridge_General32()
+        public void MethodBridge_Universal32()
         {
-            GenerateMethodBridgeCppFile(CallConventionType.General32, "MethodBridge_General32");
+            GenerateMethodBridgeCppFile(PlatformABI.Universal32, "MethodBridge_Universal32");
         }
 
-        public void MethodBridge_General64()
+        public void MethodBridge_Universal64()
         {
-            GenerateMethodBridgeCppFile(CallConventionType.General64, "MethodBridge_General64");
+            GenerateMethodBridgeCppFile(PlatformABI.Universal64, "MethodBridge_Universal64");
         }
 
         public void MethodBridge_Arm64()
         {
-            GenerateMethodBridgeCppFile(CallConventionType.Arm64, "MethodBridge_arm64");
+            GenerateMethodBridgeCppFile(PlatformABI.Arm64, "MethodBridge_Arm64");
         }
 
         private static void CleanIl2CppBuildCache()
@@ -266,7 +267,7 @@ namespace HybridCLR.Editor.Builder
             return rootAssemblies;
         }
 
-        private static void GenerateMethodBridgeCppFile(CallConventionType platform, string fileName)
+        private static void GenerateMethodBridgeCppFile(PlatformABI platform, string fileName)
         {
             string outputFile = $"{BuildConfig.MethodBridgeCppDir}/{fileName}.cpp";
             var g = new MethodBridgeGenerator(new MethodBridgeGeneratorOptions()

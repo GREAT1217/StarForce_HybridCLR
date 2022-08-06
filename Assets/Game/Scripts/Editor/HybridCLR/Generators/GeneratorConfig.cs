@@ -6,9 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Game;
 using Game.Hotfix;
-using GameFramework.Fsm;
-using GameFramework.Procedure;
-using GameFramework.Resource;
 using UnityEngine;
 using UnityGameFramework.Runtime;
 
@@ -78,6 +75,12 @@ namespace HybridCLR.Generators
             return new List<string>
             {
                 "vi8i8",
+                "i4i8i8i4i4i8i8",
+                "i8i8S12",
+                "S12i8S12",
+                "S12i8S12S12",
+                "i16i8i16i16",
+                
                 "i4i8i8i8i4i1i8",
                 "vi8i1i8",
                 "S40i8",
@@ -104,6 +107,7 @@ namespace HybridCLR.Generators
             return new List<string>
             {
                 "vi4i4",
+                "S12i4S12S12",
             };
         }
     }

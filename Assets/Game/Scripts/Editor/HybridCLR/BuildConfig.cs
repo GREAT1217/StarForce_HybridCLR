@@ -12,7 +12,7 @@ namespace HybridCLR.Editor.Builder
         public const string LocalIl2CppDir = "HybridCLRData/LocalIl2CppData/il2cpp";
         public const string HotFixDllsOutputDir = "HybridCLRData/HotFixDlls";
         public const string AssembliesPostIl2CppStripDir = "HybridCLRData/AssembliesPostIl2CppStrip";
-        public const string MethodBridgeCppDir = "HybridCLRData/libil2cpp/huatuo/interpreter";
+        public const string MethodBridgeCppDir = "HybridCLRData/LocalIl2CppData/il2cpp/libil2cpp/hybridclr/interpreter";
 
 #if !UNITY_IOS
         [InitializeOnLoadMethod]
@@ -76,7 +76,21 @@ namespace HybridCLR.Editor.Builder
 
         public static string GetOriginBuildStripAssembliesDir(BuildTarget target)
         {
+#if UNITY_2021_1_OR_NEWER
+#if UNITY_STANDALONE_WIN
+            return "Library/Bee/artifacts/WinPlayerBuildProgram/ManagedStripped";
+#elif UNITY_ANDROID
+            return "Library/Bee/artifacts/Android/ManagedStripped";
+#elif UNITY_IOS
+            return "Library/PlayerDataCache/iOS/Data/Managed";
+#elif UNITY_WEBGL
+            return "Library/Bee/artifacts/WebGL/ManagedStripped";
+#else
+            throw new NotSupportedException("GetOriginBuildStripAssembliesDir");
+#endif
+#else
             return target == BuildTarget.Android ? "Temp/StagingArea/assets/bin/Data/Managed" : "Temp/StagingArea/Data/Managed/";
+#endif
         }
     }
 }
