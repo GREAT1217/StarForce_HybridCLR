@@ -9,10 +9,10 @@ namespace HybridCLR.Editor.Builder
 {
     public static class BuildConfig
     {
-        public const string LocalIl2CppDir = "HybridCLRData/LocalIl2CppData/il2cpp";
-        public const string HotFixDllsOutputDir = "HybridCLRData/HotFixDlls";
-        public const string AssembliesPostIl2CppStripDir = "HybridCLRData/AssembliesPostIl2CppStrip";
-        public const string MethodBridgeCppDir = "HybridCLRData/LocalIl2CppData/il2cpp/libil2cpp/hybridclr/interpreter";
+        private static readonly string LocalIl2CppDir = Application.dataPath + "/../HybridCLRData/LocalIl2CppData/il2cpp";
+        private static readonly string HotFixDllsOutputDir = Application.dataPath + "/../HybridCLRData/HotFixDlls";
+        public static readonly string AssembliesPostIl2CppStripDir = Application.dataPath + "/../HybridCLRData/AssembliesPostIl2CppStrip";
+        public static readonly string MethodBridgeCppDir = Application.dataPath + "/../HybridCLRData/LocalIl2CppData/il2cpp/libil2cpp/hybridclr/interpreter";
 
 #if !UNITY_IOS
         [InitializeOnLoadMethod]
@@ -78,18 +78,18 @@ namespace HybridCLR.Editor.Builder
         {
 #if UNITY_2021_1_OR_NEWER
 #if UNITY_STANDALONE_WIN
-            return "Library/Bee/artifacts/WinPlayerBuildProgram/ManagedStripped";
+            return Application.dataPath + "/../Library/Bee/artifacts/WinPlayerBuildProgram/ManagedStripped";
 #elif UNITY_ANDROID
-            return "Library/Bee/artifacts/Android/ManagedStripped";
+            return Application.dataPath + "/../Library/Bee/artifacts/Android/ManagedStripped";
 #elif UNITY_IOS
-            return "Library/PlayerDataCache/iOS/Data/Managed";
+            return Application.dataPath + "/../Library/PlayerDataCache/iOS/Data/Managed";
 #elif UNITY_WEBGL
-            return "Library/Bee/artifacts/WebGL/ManagedStripped";
+            return Application.dataPath + "/../Library/Bee/artifacts/WebGL/ManagedStripped";
 #else
             throw new NotSupportedException("GetOriginBuildStripAssembliesDir");
 #endif
 #else
-            return target == BuildTarget.Android ? "Temp/StagingArea/assets/bin/Data/Managed" : "Temp/StagingArea/Data/Managed/";
+            return Application.dataPath + (target == BuildTarget.Android ? "/../Temp/StagingArea/assets/bin/Data/Managed" : "/../Temp/StagingArea/Data/Managed/");
 #endif
         }
     }
