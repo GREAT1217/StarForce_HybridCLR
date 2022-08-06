@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
-using GameFramework;
 using GameFramework.Fsm;
 using GameFramework.Procedure;
 using GameFramework.Resource;
@@ -17,8 +15,16 @@ namespace Game
             base.OnEnter(procedureOwner);
 
 #if UNITY_EDITOR
-            Assembly hotfixAssembly = System.AppDomain.CurrentDomain.GetAssemblies().First(assembly => assembly.GetName().Name == "Game.Hotfix");
-            StartHotfix(hotfixAssembly);
+            if (GameEntry.Base.EditorResourceMode)
+            {
+                // 编辑器资源模式
+                Assembly hotfixAssembly = System.AppDomain.CurrentDomain.GetAssemblies().First(assembly => assembly.GetName().Name == "Game.Hotfix");
+                StartHotfix(hotfixAssembly);
+            }
+            else
+            {
+                GameEntry.Resource.LoadAsset("Assets/Game/Hotfix/Game.Hotfix.dll.bytes", new LoadAssetCallbacks(OnLoadAssetSuccess, OnLoadAssetFail));
+            }
 #else
             GameEntry.Resource.LoadAsset("Assets/Game/Hotfix/Game.Hotfix.dll.bytes", new LoadAssetCallbacks(OnLoadAssetSuccess, OnLoadAssetFail));
 #endif
