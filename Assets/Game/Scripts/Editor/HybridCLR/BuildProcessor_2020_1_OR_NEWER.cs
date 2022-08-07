@@ -8,6 +8,9 @@ using UnityEditor.Build.Reporting;
 using UnityEditor.Il2Cpp;
 using UnityEditor.UnityLinker;
 using UnityEngine;
+#if UNITY_ANDROID
+using UnityEditor.Android;
+#endif
 
 namespace UnityEditor
 {
