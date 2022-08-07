@@ -66,11 +66,12 @@ namespace Game.Editor
 
         public void OnOutputUpdatableVersionListData(Platform platform, string versionListPath, int versionListLength, int versionListHashCode, int versionListCompressedLength, int versionListCompressedHashCode)
         {
+            string platformPath = PlatformUtility.GetPlatformPath(platform);
             string gameVersion = m_GameVersion.Replace('.', '_');
             VersionInfo versionInfo = new VersionInfo
             {
                 ForceUpdateGame = false,
-                UpdatePrefixUri = string.Format("http://www.game.com/{0}_{1}/{2}", gameVersion, m_InternalResourceVersion.ToString(), platform.ToString()),
+                UpdatePrefixUri = string.Format("http://www.game.com/{0}_{1}/{2}", gameVersion, m_InternalResourceVersion.ToString(), platformPath),
                 LatestGameVersion = m_GameVersion,
                 InternalGameVersion = 1,
                 InternalResourceVersion = m_InternalResourceVersion,
@@ -80,7 +81,7 @@ namespace Game.Editor
                 VersionListCompressedHashCode = versionListCompressedHashCode,
             };
             string versionJson = LitJson.JsonMapper.ToJson(versionInfo);
-            IOUtility.SaveFileSafe(m_OutputDirectory, platform.ToString() + "Version.txt", versionJson);
+            IOUtility.SaveFileSafe(m_OutputDirectory, platformPath + "Version.txt", versionJson);
 
             Debug.LogFormat("Version save success. \n length is {0} , hash code is {1} . \n compressed length is {2} , compressed hash code is {3} . \n list path is {4} \n ", versionListLength, versionListHashCode, versionListCompressedLength, versionListCompressedHashCode, versionListPath);
         }

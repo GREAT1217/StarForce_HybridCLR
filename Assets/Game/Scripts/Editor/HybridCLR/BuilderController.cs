@@ -115,8 +115,8 @@ namespace HybridCLR.Editor.Builder
 
         public void CompileHotfixDll(int platformIndex)
         {
-            Platform platform = (Platform) Enum.Parse(typeof(Platform), PlatformNames[platformIndex]);
-            BuildTarget buildTarget = GetBuildTarget(platform);
+            Platform platform = (Platform)Enum.Parse(typeof(Platform), PlatformNames[platformIndex]);
+            BuildTarget buildTarget = PlatformUtility.GetBuildTarget(platform);
 
             // Build Hotfix Dll
             BuildTargetGroup group = BuildPipeline.GetBuildTargetGroup(buildTarget);
@@ -156,42 +156,6 @@ namespace HybridCLR.Editor.Builder
             Debug.Log("Hotfix dll build complete.");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-        }
-
-        private BuildTarget GetBuildTarget(Platform platform)
-        {
-            switch (platform)
-            {
-                case Platform.Windows:
-                    return BuildTarget.StandaloneWindows;
-
-                case Platform.Windows64:
-                    return BuildTarget.StandaloneWindows64;
-
-                case Platform.MacOS:
-#if UNITY_2017_3_OR_NEWER
-                    return BuildTarget.StandaloneOSX;
-#else
-                    return BuildTarget.StandaloneOSXUniversal;
-#endif
-                case Platform.Linux:
-                    return BuildTarget.StandaloneLinux64;
-
-                case Platform.IOS:
-                    return BuildTarget.iOS;
-
-                case Platform.Android:
-                    return BuildTarget.Android;
-
-                case Platform.WindowsStore:
-                    return BuildTarget.WSAPlayer;
-
-                case Platform.WebGL:
-                    return BuildTarget.WebGL;
-
-                default:
-                    throw new GameFrameworkException("Platform is invalid.");
-            }
         }
 
         #endregion

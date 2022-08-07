@@ -109,7 +109,7 @@ namespace Game
                     ConfirmText = GameEntry.Localization.GetString("ForceUpdate.UpdateButton"),
                     OnClickConfirm = GotoUpdateApp,
                     CancelText = GameEntry.Localization.GetString("ForceUpdate.QuitButton"),
-                    OnClickCancel = delegate (object userData) { UnityGameFramework.Runtime.GameEntry.Shutdown(ShutdownType.Quit); },
+                    OnClickCancel = delegate(object userData) { UnityGameFramework.Runtime.GameEntry.Shutdown(ShutdownType.Quit); },
                 });
 
                 return;
@@ -135,6 +135,7 @@ namespace Game
 
         private string GetPlatformPath()
         {
+            // 这里和 PlatformUtility.GetPlatformPath() 对应。由 Unity.RuntimePlatform 得到 平台标识符
             switch (Application.platform)
             {
                 case RuntimePlatform.WindowsEditor:
@@ -150,6 +151,18 @@ namespace Game
 
                 case RuntimePlatform.Android:
                     return "Android";
+
+                case RuntimePlatform.WSAPlayerX64:
+                case RuntimePlatform.WSAPlayerX86:
+                case RuntimePlatform.WSAPlayerARM:
+                    return "WSA";
+
+                case RuntimePlatform.WebGLPlayer:
+                    return "WebGL";
+
+                case RuntimePlatform.LinuxEditor:
+                case RuntimePlatform.LinuxPlayer:
+                    return "Linux";
 
                 default:
                     throw new System.NotSupportedException(Utility.Text.Format("Platform '{0}' is not supported.", Application.platform));
