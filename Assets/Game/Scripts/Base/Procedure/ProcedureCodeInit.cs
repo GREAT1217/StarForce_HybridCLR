@@ -15,16 +15,8 @@ namespace Game
             base.OnEnter(procedureOwner);
 
 #if UNITY_EDITOR
-            if (GameEntry.Base.EditorResourceMode)
-            {
-                // 编辑器资源模式
-                Assembly hotfixAssembly = System.AppDomain.CurrentDomain.GetAssemblies().First(assembly => assembly.GetName().Name == "Game.Hotfix");
-                StartHotfix(hotfixAssembly);
-            }
-            else
-            {
-                GameEntry.Resource.LoadAsset("Assets/Game/Hotfix/Game.Hotfix.dll.bytes", new LoadAssetCallbacks(OnLoadAssetSuccess, OnLoadAssetFail));
-            }
+            Assembly hotfixAssembly = System.AppDomain.CurrentDomain.GetAssemblies().First(assembly => assembly.GetName().Name == "Game.Hotfix");
+            StartHotfix(hotfixAssembly);
 #else
             GameEntry.Resource.LoadAsset("Assets/Game/Hotfix/Game.Hotfix.dll.bytes", new LoadAssetCallbacks(OnLoadAssetSuccess, OnLoadAssetFail));
 #endif
@@ -33,11 +25,11 @@ namespace Game
         private void OnLoadAssetSuccess(string assetName, object asset, float duration, object userData)
         {
             TextAsset dll = (TextAsset)asset;
-            Assembly hotfixAssembly  = Assembly.Load(dll.bytes);
+            Assembly hotfixAssembly = Assembly.Load(dll.bytes);
             Log.Info("Load hotfix dll OK.");
             StartHotfix(hotfixAssembly);
         }
-        
+
         private void OnLoadAssetFail(string assetName, LoadResourceStatus status, string errorMessage, object userData)
         {
             Log.Error("Load hotfix dll failed. " + errorMessage);
