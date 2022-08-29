@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Game.Editor;
+using Game;
 using Game.Hotfix;
 using GameFramework;
 using HybridCLR.Generators;
@@ -14,6 +14,7 @@ using UnityEditor.Build.Player;
 using UnityEngine;
 using UnityGameFramework.Editor.ResourceTools;
 using Debug = UnityEngine.Debug;
+using Object = UnityEngine.Object;
 
 namespace HybridCLR.Editor.Builder
 {
@@ -22,16 +23,14 @@ namespace HybridCLR.Editor.Builder
         private const string HotfixDllPath = "Assets/Game/Hotfix";
         private const string HotfixDllName = "Game.Hotfix.dll";
 
-        private readonly string m_InitBatTemplate;
-        private readonly string m_InitBatTemp;
+        private readonly string m_InitBatTemplatePath;
+        private readonly string m_InitBatTempPath;
+        private readonly string m_MethodBridgeConfigPath;
+
         private string m_UnityInstallDirectory;
 
-        public string UnityInstallDirectory
-        {
-            get
-            {
-                return m_UnityInstallDirectory;
-            }
+        public string UnityInstallDirectory {
+            get { return m_UnityInstallDirectory; }
             set
             {
                 m_UnityInstallDirectory = value;
@@ -42,40 +41,29 @@ namespace HybridCLR.Editor.Builder
             }
         }
 
-        public string[] VersionNames
-        {
-            get;
-        }
+        public string[] VersionNames { get; }
 
-        public string[] VersionValues
-        {
-            get;
-        }
+        public string[] VersionValues { get; }
 
-        public string[] PlatformNames
-        {
-            get;
-        }
+        public string[] PlatformNames { get; }
 
         public BuilderController()
         {
-            m_InitBatTemplate = Application.dataPath + "/../HybridCLRData/init_local_il2cpp_data.bat";
-            m_InitBatTemp = Application.dataPath + "/../HybridCLRData/init_local_il2cpp_data_temp.bat";
+            m_InitBatTemplatePath = Application.dataPath + "/../HybridCLRData/init_local_il2cpp_data.bat";
+            m_InitBatTempPath = Application.dataPath + "/../HybridCLRData/init_local_il2cpp_data_temp.bat";
+            m_MethodBridgeConfigPath = "Assets/HybridCLR/Editor/Generators/GeneratorConfig.cs";
 
             m_UnityInstallDirectory = EditorPrefs.GetString("UnityInstallDirectory");
-
             VersionNames = new[]
             {
                 "2020.3.x",
                 "2021.3.x"
             };
-
             VersionValues = new[]
             {
                 "2020.3.33",
                 "2021.3.1"
             };
-
             PlatformNames = Enum.GetNames(typeof(Platform));
         }
 
@@ -83,18 +71,18 @@ namespace HybridCLR.Editor.Builder
 
         public void InitHybridCLR(int versionIndex)
         {
-            if (!File.Exists(m_InitBatTemplate))
+            if (!File.Exists(m_InitBatTemplatePath))
             {
-                Debug.LogErrorFormat("File not Exit : {0}", m_InitBatTemplate);
+                Debug.LogErrorFormat("File not Exit : {0}", m_InitBatTemplatePath);
                 return;
             }
 
-            string command = File.ReadAllText(m_InitBatTemplate);
+            string command = File.ReadAllText(m_InitBatTemplatePath);
             command = command.Replace("__VERSION__", VersionValues[versionIndex]);
             command = command.Replace("__PATH__", UnityInstallDirectory);
-            File.WriteAllText(m_InitBatTemp, command);
+            File.WriteAllText(m_InitBatTempPath, command);
 
-            RunProcess(m_InitBatTemp);
+            RunProcess(m_InitBatTempPath);
         }
 
         private void RunProcess(string fileName)
@@ -111,56 +99,17 @@ namespace HybridCLR.Editor.Builder
 
         #endregion
 
-        #region CompoileDll
-
-        public void CompileHotfixDll(int platformIndex)
-        {
-            Platform platform = (Platform)Enum.Parse(typeof(Platform), PlatformNames[platformIndex]);
-            BuildTarget buildTarget = PlatformUtility.GetBuildTarget(platform);
-
-            // Build Hotfix Dll
-            BuildTargetGroup group = BuildPipeline.GetBuildTargetGroup(buildTarget);
-            ScriptCompilationSettings scriptCompilationSettings = new ScriptCompilationSettings();
-            scriptCompilationSettings.group = group;
-            scriptCompilationSettings.target = buildTarget;
-            // scriptCompilationSettings.options = ScriptCompilationOptions.DevelopmentBuild;
-
-            string buildPath = BuildConfig.GetHotFixDllsOutputDirByTarget(buildTarget);
-            IOUtility.CreateDirectoryIfNotExists(buildPath);
-            ScriptCompilationResult scriptCompilationResult = PlayerBuildInterface.CompilePlayerScripts(scriptCompilationSettings, buildPath);
-            foreach (var ass in scriptCompilationResult.assemblies)
-            {
-                Debug.LogFormat("Build assemblies : {0}", ass);
-            }
-
-            // Copy Hotfix Dll
-            IOUtility.CreateDirectoryIfNotExists(HotfixDllPath);
-            string oriFileName = string.Format("{0}/{1}", buildPath, HotfixDllName);
-            string desFileName = string.Format("{0}/{1}.bytes", HotfixDllPath, HotfixDllName);
-            File.Copy(oriFileName, desFileName, true);
-
-            // Copy AOT Dll
-            string aotDllPath = string.Format("{0}/{1}", BuildConfig.AssembliesPostIl2CppStripDir, buildTarget);
-            foreach (var dllName in GameHotfixEntry.AOTDllNames)
-            {
-                oriFileName = string.Format("{0}/{1}", aotDllPath, dllName);
-                if (!File.Exists(oriFileName))
-                {
-                    Debug.LogError($"AOT 补充元数据 dll: {oriFileName} 文件不存在。需要构建一次主包后才能生成裁剪后的 AOT dll.");
-                    continue;
-                }
-                desFileName = string.Format("{0}/{1}.bytes", HotfixDllPath, dllName);
-                File.Copy(oriFileName, desFileName, true);
-            }
-
-            Debug.Log("Hotfix dll build complete.");
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
-
-        #endregion
-
         #region MethodBridge
+
+        public void EditMethodBridgeConfig()
+        {
+            if (AssetDatabase.CanOpenForEdit(m_MethodBridgeConfigPath))
+            {
+                var config = AssetDatabase.LoadAssetAtPath<Object>(m_MethodBridgeConfigPath);
+                EditorGUIUtility.PingObject(config);
+                AssetDatabase.OpenAsset(config);
+            }
+        }
 
         public void MethodBridge_Universal32()
         {
@@ -245,6 +194,96 @@ namespace HybridCLR.Editor.Builder
             g.Generate();
             Debug.LogFormat("== output:{0} ==", outputFile);
             CleanIl2CppBuildCache();
+        }
+
+        #endregion
+
+        #region CompoileDll
+
+        public void CompileHotfixDll(int platformIndex)
+        {
+            Platform platform = (Platform) Enum.Parse(typeof(Platform), PlatformNames[platformIndex]);
+            BuildTarget buildTarget = GetBuildTarget(platform);
+
+            // Build Hotfix Dll
+            BuildTargetGroup group = BuildPipeline.GetBuildTargetGroup(buildTarget);
+            ScriptCompilationSettings scriptCompilationSettings = new ScriptCompilationSettings();
+            scriptCompilationSettings.group = group;
+            scriptCompilationSettings.target = buildTarget;
+            // scriptCompilationSettings.options = ScriptCompilationOptions.DevelopmentBuild;
+
+            string buildPath = BuildConfig.GetHotFixDllsOutputDirByTarget(buildTarget);
+            IOUtility.CreateDirectoryIfNotExists(buildPath);
+            ScriptCompilationResult scriptCompilationResult = PlayerBuildInterface.CompilePlayerScripts(scriptCompilationSettings, buildPath);
+            foreach (var ass in scriptCompilationResult.assemblies)
+            {
+                Debug.LogFormat("Build assemblies : {0}", ass);
+            }
+
+            // Copy Hotfix Dll
+            IOUtility.CreateDirectoryIfNotExists(HotfixDllPath);
+            string oriFileName = string.Format("{0}/{1}", buildPath, HotfixDllName);
+            string desFileName = string.Format("{0}/{1}.bytes", HotfixDllPath, HotfixDllName);
+            File.Copy(oriFileName, desFileName, true);
+
+            // Copy AOT Dll
+            string aotDllPath = string.Format("{0}/{1}", BuildConfig.AssembliesPostIl2CppStripDir, buildTarget);
+            foreach (var dllName in GameHotfixEntry.AOTDllNames)
+            {
+                oriFileName = string.Format("{0}/{1}", aotDllPath, dllName);
+                if (!File.Exists(oriFileName))
+                {
+                    Debug.LogError($"AOT 补充元数据 dll: {oriFileName} 文件不存在。需要构建一次主包后才能生成裁剪后的 AOT dll.");
+                    continue;
+                }
+                desFileName = string.Format("{0}/{1}.bytes", HotfixDllPath, dllName);
+                File.Copy(oriFileName, desFileName, true);
+            }
+
+            Debug.Log("Hotfix dll build complete.");
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        /// <summary>
+        /// 由 UnityGameFramework.Editor.ResourceTools.Platform 得到 BuildTarget。
+        /// </summary>
+        /// <param name="platform">UnityGameFramework.Editor.ResourceTools.Platform。</param>
+        /// <returns>BuildTarget。</returns>
+        private BuildTarget GetBuildTarget(Platform platform)
+        {
+            switch (platform)
+            {
+                case Platform.Windows:
+                    return BuildTarget.StandaloneWindows;
+
+                case Platform.Windows64:
+                    return BuildTarget.StandaloneWindows64;
+
+                case Platform.MacOS:
+#if UNITY_2017_3_OR_NEWER
+                    return BuildTarget.StandaloneOSX;
+#else
+                    return BuildTarget.StandaloneOSXUniversal;
+#endif
+                case Platform.Linux:
+                    return BuildTarget.StandaloneLinux64;
+
+                case Platform.IOS:
+                    return BuildTarget.iOS;
+
+                case Platform.Android:
+                    return BuildTarget.Android;
+
+                case Platform.WindowsStore:
+                    return BuildTarget.WSAPlayer;
+
+                case Platform.WebGL:
+                    return BuildTarget.WebGL;
+
+                default:
+                    throw new GameFrameworkException("Platform is invalid.");
+            }
         }
 
         #endregion

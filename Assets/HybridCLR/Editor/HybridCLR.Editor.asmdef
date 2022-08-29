@@ -1,5 +1,5 @@
 {
-    "name": "Game.Editor",
+    "name": "HybridCLR.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:363c5eb08ff8e6a439b85e37b8c20d96",
@@ -11,7 +11,7 @@
         "Editor"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,

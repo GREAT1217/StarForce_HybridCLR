@@ -36,6 +36,7 @@ namespace HybridCLR.Generators
             {
                 typeof(Action<int, string, Vector3>),
 
+                typeof(Log),
                 typeof(BaseComponent),
                 typeof(ConfigComponent),
                 typeof(DataNodeComponent),
@@ -58,7 +59,6 @@ namespace HybridCLR.Generators
                 typeof(UIComponent),
                 typeof(WebRequestComponent),
                 typeof(BuiltinDataComponent),
-                typeof(Log),
 
                 typeof(Dictionary<KeyValuePair<CampType, CampType>, RelationType>),
                 typeof(Dictionary<KeyValuePair<CampType, RelationType>, CampType[]>),

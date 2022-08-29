@@ -66,7 +66,7 @@ namespace Game.Editor
 
         public void OnOutputUpdatableVersionListData(Platform platform, string versionListPath, int versionListLength, int versionListHashCode, int versionListCompressedLength, int versionListCompressedHashCode)
         {
-            string platformPath = PlatformUtility.GetPlatformPath(platform);
+            string platformPath = GetPlatformPath(platform);
             string gameVersion = m_GameVersion.Replace('.', '_');
             VersionInfo versionInfo = new VersionInfo
             {
@@ -110,6 +110,44 @@ namespace Game.Editor
                 }
 
                 File.Copy(fileName, destFileName);
+            }
+        }
+        
+        /// <summary>
+        /// 由 UnityGameFramework.Editor.ResourceTools.Platform 得到 平台标识符。
+        /// </summary>
+        /// <param name="platform">UnityGameFramework.Editor.ResourceTools.Platform。</param>
+        /// <returns>平台标识符。</returns>
+        public string GetPlatformPath(Platform platform)
+        {
+            // 这里和 ProcedureVersionCheck.GetPlatformPath() 对应。
+            // 使用 平台标识符 关联 UnityEngine.RuntimePlatform 和 UnityGameFramework.Editor.ResourceTools.Platform
+            switch (platform)
+            {
+                case Platform.Windows:
+                case Platform.Windows64:
+                    return "Windows";
+
+                case Platform.MacOS:
+                    return "MacOS";
+
+                case Platform.IOS:
+                    return "IOS";
+
+                case Platform.Android:
+                    return "Android";
+
+                case Platform.WindowsStore:
+                    return "WSA";
+
+                case Platform.WebGL:
+                    return "WebGL";
+
+                case Platform.Linux:
+                    return "Linux";
+
+                default:
+                    throw new GameFrameworkException("Platform is invalid.");
             }
         }
     }

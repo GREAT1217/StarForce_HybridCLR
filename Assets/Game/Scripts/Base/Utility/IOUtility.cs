@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace Game.Editor
+namespace Game
 {
     public static class IOUtility
     {

@@ -80,7 +80,7 @@ namespace Game
 
         private void OnWebRequestSuccess(object sender, GameEventArgs e)
         {
-            WebRequestSuccessEventArgs ne = (WebRequestSuccessEventArgs)e;
+            WebRequestSuccessEventArgs ne = (WebRequestSuccessEventArgs) e;
             if (ne.UserData != this)
             {
                 return;
@@ -124,7 +124,7 @@ namespace Game
 
         private void OnWebRequestFailure(object sender, GameEventArgs e)
         {
-            WebRequestFailureEventArgs ne = (WebRequestFailureEventArgs)e;
+            WebRequestFailureEventArgs ne = (WebRequestFailureEventArgs) e;
             if (ne.UserData != this)
             {
                 return;
@@ -133,9 +133,14 @@ namespace Game
             Log.Warning("Check version failure, error message is '{0}'.", ne.ErrorMessage);
         }
 
+        /// <summary>
+        /// 由 UnityEngine.RuntimePlatform 得到 平台标识符。
+        /// </summary>
+        /// <returns>平台标识符。</returns>
         private string GetPlatformPath()
         {
-            // 这里和 PlatformUtility.GetPlatformPath() 对应。由 Unity.RuntimePlatform 得到 平台标识符
+            // 这里和 GameBuildEventHandler.GetPlatformPath() 对应。
+            // 使用 平台标识符 关联 UnityEngine.RuntimePlatform 和 UnityGameFramework.Editor.ResourceTools.Platform
             switch (Application.platform)
             {
                 case RuntimePlatform.WindowsEditor:
