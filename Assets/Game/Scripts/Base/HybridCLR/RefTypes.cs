@@ -3,20 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Game;
-using GameFramework;
 using UnityEngine;
 using UnityEngine.Scripting;
+using System.IO;
 
 [assembly: Preserve]
-
 enum IntEnum : int
-{
-    A,
-    B,
-}
-
-enum ByteEnum : byte
 {
     A,
     B,
@@ -45,30 +37,6 @@ class MyStateMachine : IAsyncStateMachine
 
 public class RefTypes : MonoBehaviour
 {
-    // TODO 游戏中使用的泛型
-    void RefGame()
-    {
-        new Dictionary<string, bool>();
-        new Dictionary<byte, object>();
-        new Dictionary<ByteEnum, object>();
-        new KeyValuePair<ByteEnum, ByteEnum>();
-        new Dictionary<KeyValuePair<ByteEnum, ByteEnum>, ByteEnum>();
-        new Dictionary<KeyValuePair<ByteEnum, ByteEnum>, ByteEnum[]>();
-        Utility.Text.Format<ByteEnum, string, string>(null, ByteEnum.A, null, null);
-        GameEntry.Localization.GetString<string, string, string, string, string, string>(null, null, null, null, null, null, null);
-    }
-
-    void RefUnityEngine()
-    {
-        GameObject.Instantiate<GameObject>(null);
-        Instantiate<GameObject>(null, null);
-        Instantiate<GameObject>(null, null, false);
-        Instantiate<GameObject>(null, new Vector3(), new Quaternion());
-        Instantiate<GameObject>(null, new Vector3(), new Quaternion(), null);
-        this.gameObject.AddComponent<RefTypes>();
-        gameObject.AddComponent(typeof(RefTypes));
-    }
-
     List<Type> GetTypes()
     {
         return new List<Type>
@@ -93,8 +61,10 @@ public class RefTypes : MonoBehaviour
         a.ToString();
     }
 
+
     void RefMisc()
     {
+
     }
 
     void RefComparers()
@@ -121,6 +91,7 @@ public class RefTypes : MonoBehaviour
         b = EqualityComparer<object>.Default;
     }
 
+
     void RefNullable()
     {
         // nullable
@@ -145,6 +116,7 @@ public class RefTypes : MonoBehaviour
         //int, long,float,double, IntEnum,object
         List<object> b = new List<object>()
         {
+
         };
     }
 
@@ -228,6 +200,7 @@ public class RefTypes : MonoBehaviour
 
     public void RefProtobufNet()
     {
+        
     }
 
     public void RefGoogleProtobuf()
@@ -236,17 +209,9 @@ public class RefTypes : MonoBehaviour
 
     class TestTable
     {
-        public int Id
-        {
-            get;
-            set;
-        }
+        public int Id { get; set; }
 
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
     }
 
     public void RefSQLite()

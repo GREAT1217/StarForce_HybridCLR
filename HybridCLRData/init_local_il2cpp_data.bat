@@ -1,7 +1,9 @@
 @echo off
 
+set PATH=%PATH%;%WINDIR%\system32
+
 rem set default branch
-set IL2CPP_BRANCH=__VERSION__
+set IL2CPP_BRANCH=%~1
 
 if exist hybridclr_repo rd /s /q hybridclr_repo
 rem git clone https://github.com/focus-creative-games/hybridclr
@@ -13,7 +15,7 @@ git clone --depth=1 -b %IL2CPP_BRANCH% https://gitee.com/focus-creative-games/il
 
 
 rem replace with right Unity Editor Install path
-set IL2CPP_PATH=__PATH__
+set IL2CPP_PATH=%~2
 
 if not exist "%IL2CPP_PATH%" (
     echo "please set correct IL2CPP_PATH value"
@@ -28,16 +30,17 @@ if not exist %LOCAL_IL2CPP_DATA% (
 
 rem need copdy MonoBleedingEdge
 set MBE=%LOCAL_IL2CPP_DATA%\MonoBleedingEdge
-if not exist %MBE% (
-    xcopy /q /i /e "%IL2CPP_PATH%\..\MonoBleedingEdge" %MBE%
+if exist %MBE% (
+    rd /s /q %MBE%
 )
-
+xcopy /q /i /e "%IL2CPP_PATH%\..\MonoBleedingEdge" %MBE%
 
 rem copy il2cpp
 set IL2CPP=%LOCAL_IL2CPP_DATA%\il2cpp
-if not exist %IL2CPP% (
-    xcopy /q /i /e "%IL2CPP_PATH%" %IL2CPP%
+if exist %IL2CPP% (
+    rd /s /q %IL2CPP%
 )
+xcopy /q /i /e "%IL2CPP_PATH%" %IL2CPP%
 
 set HYBRIDCLR_REPO_DIR=hybridclr_repo
 
@@ -54,8 +57,8 @@ set IL2CPP_CACHE=..\Library\Il2cppBuildCache
 echo clean %IL2CPP_CACHE%
 if exist "%IL2CPP_CACHE%" rd /s /q "%IL2CPP_CACHE%"
 
-echo success
+echo succ
 
 :EXIT
 
-PAUSE
+timeout /t 10

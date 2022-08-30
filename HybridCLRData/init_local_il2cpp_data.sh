@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # 设置默认分支为2020.3.33，避免很多人忘了切分支
-IL2CPP_BRANCH=__VERSION__
+IL2CPP_BRANCH=$1
 
 rm -rf hybridclr_repo
-# clone huatuo仓库,国内推荐用 gitee
+# clone hybridclr仓库,国内推荐用 gitee
 # git clone https://github.com/focus-creative-games/hybridclr
 git clone --depth=1 https://gitee.com/focus-creative-games/hybridclr hybridclr_repo
 
@@ -17,7 +17,7 @@ git clone --depth=1 -b $IL2CPP_BRANCH https://gitee.com/focus-creative-games/il2
 # 一般像这样 
 # C:\Program Files\Unity\Hub\Editor\2020.3.33f1c2\Editor\Data\il2cpp
 # /Applications/Unity/Hub/Editor/2020.3.33f1/Unity.app/Contents/il2cpp
-IL2CPP_PATH='__PATH__'
+IL2CPP_PATH=$2
 
 if [ ! -d "$IL2CPP_PATH" ] ; then
     echo "你未指定正确的il2cpp路径"
@@ -36,20 +36,19 @@ fi
 
 # 拷贝 MonoBleedingEdge 目录
 MBE=$LOCAL_IL2CPP_DATA/MonoBleedingEdge
-if [ ! -d "$MBE" ]; then
-    cp -r "$IL2CPP_PATH/../MonoBleedingEdge" $MBE
-fi
+rm -rf "$MBE"
+cp -r "$IL2CPP_PATH/../MonoBleedingEdge" $MBE
 
 
 # 拷贝il2cpp目录
 IL2CPP=$LOCAL_IL2CPP_DATA/il2cpp
-if [ ! -d "$IL2CPP" ]; then
-    cp -r "$IL2CPP_PATH" "$IL2CPP"
-fi
+rm -rf "$IL2CPP"
+cp -r "$IL2CPP_PATH" "$IL2CPP"
 
-# 接下来替换 il2cpp目录下的libil2cpp为 huatuo修改后的版本
+
+# 接下来替换 il2cpp目录下的libil2cpp为 hybridclr修改后的版本
 # 需要使用 {https://gitee.com/focus-creative-games/il2cpp_plus}/libil2cpp 替换 il2cpp/libil2cpp目录
-# 需要使用 {https://gitee.com/focus-creative-games/hybridclr}/huatuo 添加到 il2cpp/libil2cpp目录下，即il2cpp/libil2cpp/huatuo
+# 需要使用 {https://gitee.com/focus-creative-games/hybridclr}/hybridclr 添加到 il2cpp/libil2cpp目录下，即il2cpp/libil2cpp/hybridclr
 
 HYBRIDCLR_REPO_DIR=hybridclr_repo
 IL2CPP_PLUS_REPO_DIR=il2cpp_plus_repo
@@ -58,7 +57,7 @@ LIBIL2CPP_PATH=$LOCAL_IL2CPP_DATA/il2cpp/libil2cpp
 rm -rf "$LIBIL2CPP_PATH"
 
 cp -r "$IL2CPP_PLUS_REPO_DIR/libil2cpp" "$LIBIL2CPP_PATH"
-cp -r "$HYBRIDCLR_REPO_DIR/huatuo" "$LIBIL2CPP_PATH/huatuo"
+cp -r "$HYBRIDCLR_REPO_DIR/hybridclr" "$LIBIL2CPP_PATH/hybridclr"
 
 # 务必清除缓存，不然build仍然使用旧版本。
 # 只影响直接build的情况，不影响导出工程的情形。
@@ -67,3 +66,5 @@ echo 清除 Library/Il2cppBuildCache 缓存目录
 rm -rf ../Library/Il2cppBuildCache
 
 echo 初始化成功
+
+read -p "Press enter to continue" -t 10

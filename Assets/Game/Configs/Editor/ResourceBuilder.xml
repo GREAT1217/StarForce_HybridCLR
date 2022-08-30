@@ -2,14 +2,14 @@
 <UnityGameFramework>
   <ResourceBuilder>
     <Settings>
-      <InternalResourceVersion>6</InternalResourceVersion>
+      <InternalResourceVersion>1</InternalResourceVersion>
       <Platforms>2</Platforms>
       <AssetBundleCompression>0</AssetBundleCompression>
       <CompressionHelperTypeName>UnityGameFramework.Runtime.DefaultCompressionHelper</CompressionHelperTypeName>
       <AdditionalCompressionSelected>True</AdditionalCompressionSelected>
       <ForceRebuildAssetBundleSelected>True</ForceRebuildAssetBundleSelected>
       <BuildEventHandlerTypeName>Game.Editor.GameBuildEventHandler</BuildEventHandlerTypeName>
-      <OutputDirectory>C:/Project/_Study/StarForce_HuaTuo/Builds</OutputDirectory>
+      <OutputDirectory>D:/Project/Study/StarForce_HuaTuo/Builds</OutputDirectory>
       <OutputPackageSelected>True</OutputPackageSelected>
       <OutputFullSelected>True</OutputFullSelected>
       <OutputPackedSelected>True</OutputPackedSelected>

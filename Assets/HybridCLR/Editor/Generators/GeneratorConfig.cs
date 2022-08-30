@@ -9,7 +9,7 @@ using Game.Hotfix;
 using UnityEngine;
 using UnityGameFramework.Runtime;
 
-namespace HybridCLR.Generators
+namespace HybridCLR.Editor.Generators
 {
     internal class GeneratorConfig
     {
@@ -80,20 +80,6 @@ namespace HybridCLR.Generators
                 "S12i8S12",
                 "S12i8S12S12",
                 "i16i8i16i16",
-                
-                "i4i8i8i8i4i1i8",
-                "vi8i1i8",
-                "S40i8",
-                "S16i8",
-                "vi8i4i8",
-                "vi8i8i4i8",
-                "i8i8i1i8i8",
-                "vi8i4i4",
-                "vi8i1",
-                "i4i8i8i8i4i8i8i8",
-                "i8i1",
-                "S24i8",
-                "i1i8S2i8"
             };
         }
 

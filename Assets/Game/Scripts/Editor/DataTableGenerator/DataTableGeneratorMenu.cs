@@ -13,7 +13,7 @@ namespace Game.Editor.DataTableTools
 {
     public sealed class DataTableGeneratorMenu
     {
-        [MenuItem("Generator/DataTables")]
+        [MenuItem("Game/DataTables Generator")]
         private static void GenerateDataTables()
         {
             string[] dataTableNames = new string[]
