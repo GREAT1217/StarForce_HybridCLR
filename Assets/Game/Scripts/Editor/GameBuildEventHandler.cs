@@ -66,11 +66,12 @@ namespace Game.Editor
 
         public void OnOutputUpdatableVersionListData(Platform platform, string versionListPath, int versionListLength, int versionListHashCode, int versionListCompressedLength, int versionListCompressedHashCode)
         {
+            string platformPath = GetPlatformPath(platform);
             string gameVersion = m_GameVersion.Replace('.', '_');
             VersionInfo versionInfo = new VersionInfo
             {
                 ForceUpdateGame = false,
-                UpdatePrefixUri = string.Format("http://www.game.com/{0}_{1}/{2}", gameVersion, m_InternalResourceVersion.ToString(), platform.ToString()),
+                UpdatePrefixUri = string.Format("http://www.game.com/{0}_{1}/{2}", gameVersion, m_InternalResourceVersion.ToString(), platformPath),
                 LatestGameVersion = m_GameVersion,
                 InternalGameVersion = 1,
                 InternalResourceVersion = m_InternalResourceVersion,
@@ -80,7 +81,7 @@ namespace Game.Editor
                 VersionListCompressedHashCode = versionListCompressedHashCode,
             };
             string versionJson = LitJson.JsonMapper.ToJson(versionInfo);
-            IOUtility.SaveFileSafe(m_OutputDirectory, platform.ToString() + "Version.txt", versionJson);
+            IOUtility.SaveFileSafe(m_OutputDirectory, platformPath + "Version.txt", versionJson);
 
             Debug.LogFormat("Version save success. \n length is {0} , hash code is {1} . \n compressed length is {2} , compressed hash code is {3} . \n list path is {4} \n ", versionListLength, versionListHashCode, versionListCompressedLength, versionListCompressedHashCode, versionListPath);
         }
@@ -92,7 +93,7 @@ namespace Game.Editor
                 return;
             }
 
-            if (platform != Platform.Windows)
+            if (platform != Platform.Windows && platform != Platform.Windows64)
             {
                 return;
             }
@@ -103,12 +104,50 @@ namespace Game.Editor
             {
                 string destFileName = Utility.Path.GetRegularPath(Path.Combine(streamingAssetsPath, fileName.Substring(outputPackagePath.Length)));
                 FileInfo destFileInfo = new FileInfo(destFileName);
-                if (!destFileInfo.Directory.Exists)
+                if (destFileInfo.Directory != null && !destFileInfo.Directory.Exists)
                 {
                     destFileInfo.Directory.Create();
                 }
 
                 File.Copy(fileName, destFileName);
+            }
+        }
+        
+        /// <summary>
+        /// 由 UnityGameFramework.Editor.ResourceTools.Platform 得到 平台标识符。
+        /// </summary>
+        /// <param name="platform">UnityGameFramework.Editor.ResourceTools.Platform。</param>
+        /// <returns>平台标识符。</returns>
+        public string GetPlatformPath(Platform platform)
+        {
+            // 这里和 ProcedureVersionCheck.GetPlatformPath() 对应。
+            // 使用 平台标识符 关联 UnityEngine.RuntimePlatform 和 UnityGameFramework.Editor.ResourceTools.Platform
+            switch (platform)
+            {
+                case Platform.Windows:
+                case Platform.Windows64:
+                    return "Windows";
+
+                case Platform.MacOS:
+                    return "MacOS";
+
+                case Platform.IOS:
+                    return "IOS";
+
+                case Platform.Android:
+                    return "Android";
+
+                case Platform.WindowsStore:
+                    return "WSA";
+
+                case Platform.WebGL:
+                    return "WebGL";
+
+                case Platform.Linux:
+                    return "Linux";
+
+                default:
+                    throw new GameFrameworkException("Platform is invalid.");
             }
         }
     }

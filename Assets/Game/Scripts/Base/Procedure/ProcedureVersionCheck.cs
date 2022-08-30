@@ -80,7 +80,7 @@ namespace Game
 
         private void OnWebRequestSuccess(object sender, GameEventArgs e)
         {
-            WebRequestSuccessEventArgs ne = (WebRequestSuccessEventArgs)e;
+            WebRequestSuccessEventArgs ne = (WebRequestSuccessEventArgs) e;
             if (ne.UserData != this)
             {
                 return;
@@ -109,7 +109,7 @@ namespace Game
                     ConfirmText = GameEntry.Localization.GetString("ForceUpdate.UpdateButton"),
                     OnClickConfirm = GotoUpdateApp,
                     CancelText = GameEntry.Localization.GetString("ForceUpdate.QuitButton"),
-                    OnClickCancel = delegate (object userData) { UnityGameFramework.Runtime.GameEntry.Shutdown(ShutdownType.Quit); },
+                    OnClickCancel = delegate(object userData) { UnityGameFramework.Runtime.GameEntry.Shutdown(ShutdownType.Quit); },
                 });
 
                 return;
@@ -124,7 +124,7 @@ namespace Game
 
         private void OnWebRequestFailure(object sender, GameEventArgs e)
         {
-            WebRequestFailureEventArgs ne = (WebRequestFailureEventArgs)e;
+            WebRequestFailureEventArgs ne = (WebRequestFailureEventArgs) e;
             if (ne.UserData != this)
             {
                 return;
@@ -133,8 +133,14 @@ namespace Game
             Log.Warning("Check version failure, error message is '{0}'.", ne.ErrorMessage);
         }
 
+        /// <summary>
+        /// 由 UnityEngine.RuntimePlatform 得到 平台标识符。
+        /// </summary>
+        /// <returns>平台标识符。</returns>
         private string GetPlatformPath()
         {
+            // 这里和 GameBuildEventHandler.GetPlatformPath() 对应。
+            // 使用 平台标识符 关联 UnityEngine.RuntimePlatform 和 UnityGameFramework.Editor.ResourceTools.Platform
             switch (Application.platform)
             {
                 case RuntimePlatform.WindowsEditor:
@@ -150,6 +156,18 @@ namespace Game
 
                 case RuntimePlatform.Android:
                     return "Android";
+
+                case RuntimePlatform.WSAPlayerX64:
+                case RuntimePlatform.WSAPlayerX86:
+                case RuntimePlatform.WSAPlayerARM:
+                    return "WSA";
+
+                case RuntimePlatform.WebGLPlayer:
+                    return "WebGL";
+
+                case RuntimePlatform.LinuxEditor:
+                case RuntimePlatform.LinuxPlayer:
+                    return "Linux";
 
                 default:
                     throw new System.NotSupportedException(Utility.Text.Format("Platform '{0}' is not supported.", Application.platform));
