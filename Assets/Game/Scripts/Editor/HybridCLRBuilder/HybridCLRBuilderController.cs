@@ -73,7 +73,7 @@ namespace Game.Editor
             string importSuffix = ".bytes";
 
             // Copy Hotfix Dll
-            string oriFileName = Path.Combine(SettingsUtil.GetHotFixDllsOutputDirByTarget(buildTarget), HotfixDllName);
+            string oriFileName = Path.Combine(SettingsUtil.GetHotUpdateDllsOutputDirByTarget(buildTarget), HotfixDllName);
             string desFileName = Path.Combine(HotfixDllPath, HotfixDllName + importSuffix);
             File.Copy(oriFileName, desFileName, true);
 

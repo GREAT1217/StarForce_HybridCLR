@@ -37,6 +37,7 @@
     <type fullname="GameFramework.Variable`1" preserve="all" />
   </assembly>
   <assembly fullname="HybridCLR.Runtime">
+    <type fullname="HybridCLR.HomologousImageMode" preserve="all" />
     <type fullname="HybridCLR.LoadImageErrorCode" preserve="all" />
     <type fullname="HybridCLR.RuntimeApi" preserve="all" />
   </assembly>

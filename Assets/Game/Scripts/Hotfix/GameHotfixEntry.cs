@@ -79,7 +79,7 @@ namespace Game.Hotfix
             TextAsset dll = (TextAsset) asset;
             byte[] dllBytes = dll.bytes;
             // 加载assembly对应的dll，会自动为它hook。一旦aot泛型函数的native函数不存在，用解释器版本代码
-            var err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes);
+            var err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, HomologousImageMode.SuperSet);
             Log.Info($"LoadMetadataForAOTAssembly:{assetName}. ret:{err}");
             if (++AOTLoadFlag == AOTFlag)
             {

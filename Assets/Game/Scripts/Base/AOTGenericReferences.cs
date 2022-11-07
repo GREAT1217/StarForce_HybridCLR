@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Game;
-using GameFramework;
 public class AOTGenericReferences : UnityEngine.MonoBehaviour
 {
 
@@ -43,7 +40,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 		// System.Object GameFramework.GameFrameworkEntry::GetModule<System.Object>()
 		// System.Void GameFramework.Procedure.IProcedureManager::StartProcedure<System.Object>()
 		// System.Object GameFramework.ReferencePool::Acquire<System.Object>()
-		// System.String GameFramework.Utility/Text::Format<GameFramework.Localization.Language,System.Object,System.Object>(System.String,GameFramework.Localization.Language,System.Object,System.Object)
+		// System.String GameFramework.Utility/Text::Format<System.Object,System.Object,System.Object>(System.String,System.Object,System.Object,System.Object)
 		// System.String GameFramework.Utility/Text::Format<System.Object,System.Object>(System.String,System.Object,System.Object)
 		// System.String GameFramework.Utility/Text::Format<System.Int32>(System.String,System.Int32)
 		// System.String GameFramework.Utility/Text::Format<System.Object>(System.String,System.Object)

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
+--- !u!114 &1
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10,18 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e189374413a3f00468e49d51d8b27a09, type: 3}
-  m_Name: HybridCLRGlobalSettings
+  m_Name: 
   m_EditorClassIdentifier: 
   enable: 1
+  useGlobalIl2cpp: 0
   cloneFromGitee: 1
   hotUpdateAssemblyDefinitions:
   - {fileID: 5897886265953266890, guid: a421bdba2a01c28488de2e43f6247922, type: 3}
   hotUpdateAssemblies: []
+  preserveHotUpdateAssemblies: []
+  hotUpdateDllCompileOutputRootDir: HybridCLRData/HotUpdateDlls
+  strippedAOTDllOutputRootDir: HybridCLRData/AssembliesPostIl2CppStrip
+  patchAOTAssemblies: []
+  differentialHybridAssemblies: []
+  differentialHybridOptionOutputDir: Assets/StreamingAssets
+  collectAssetReferenceTypes: 0
   outputLinkFile: Game/HybridCLR/link.xml
   outputAOTGenericReferenceFile: Game/Scripts/Base/AOTGenericReferences.cs
-  maxGenericReferenceIteration: 4
-  ReversePInvokeWrapperCount: 10
-  maxMethodBridgeGenericIteration: 4
-  hotUpdateDllOutputDir: HotUpdateDlls
-  hybridCLRDataDir: HybridCLRData
-  strippedAssemblyDir: AssembliesPostIl2CppStrip
+  maxGenericReferenceIteration: 10
+  maxMethodBridgeGenericIteration: 10
