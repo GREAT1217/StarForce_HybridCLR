@@ -30,7 +30,7 @@ namespace Game.Hotfix
             protected set;
         }
 
-        private MyAircraft m_MyAircraft = null;
+        protected MyAircraft m_MyAircraft = null;
 
         public virtual void Initialize()
         {

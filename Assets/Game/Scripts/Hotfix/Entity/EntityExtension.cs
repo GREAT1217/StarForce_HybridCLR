@@ -45,9 +45,9 @@ namespace Game.Hotfix
             entityComponent.ShowEntity(typeof(MyAircraft), "Aircraft", Constant.AssetPriority.MyAircraftAsset, data);
         }
 
-        public static void ShowAircraft(this EntityComponent entityComponent, AircraftData data)
+        public static void ShowAircraft(this EntityComponent entityComponent, Type logicType, AircraftData data)
         {
-            entityComponent.ShowEntity(typeof(Aircraft), "Aircraft", Constant.AssetPriority.AircraftAsset, data);
+            entityComponent.ShowEntity(logicType, "Aircraft", Constant.AssetPriority.AircraftAsset, data);
         }
 
         public static void ShowThruster(this EntityComponent entityComponent, ThrusterData data)

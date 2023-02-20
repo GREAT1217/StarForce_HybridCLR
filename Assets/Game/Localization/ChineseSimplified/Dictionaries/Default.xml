@@ -25,5 +25,9 @@
     <String Key="Setting.UISound" Value="界面音效" />
     <String Key="Setting.Language" Value="语言" />
     <String Key="Setting.LanguageTips" Value="更改语言需要重启游戏" />
+    <String Key="AskSelectGame.Title" Value="游戏" />
+    <String Key="AskSelectGame.Message" Value="选择游戏模式" />
+    <String Key="GameMode.Survival" Value="生存模式" />
+    <String Key="GameMode.Boss" Value="Boss模式" />
   </Dictionary>
 </Dictionaries>

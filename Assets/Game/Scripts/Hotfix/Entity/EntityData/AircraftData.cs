@@ -13,7 +13,7 @@ using UnityEngine;
 namespace Game.Hotfix
 {
     [Serializable]
-    public abstract class AircraftData : TargetableObjectData
+    public class AircraftData : TargetableObjectData
     {
         [SerializeField]
         private ThrusterData m_ThrusterData = null;

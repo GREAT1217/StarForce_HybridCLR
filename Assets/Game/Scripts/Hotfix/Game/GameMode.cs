@@ -16,5 +16,10 @@ namespace Game.Hotfix
         /// 生存模式。
         /// </summary>
         Survival,
+        
+        /// <summary>
+        /// Boss 模式
+        /// </summary>
+        Boss,
     }
 }
