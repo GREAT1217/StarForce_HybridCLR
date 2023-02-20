@@ -23,12 +23,7 @@
 /Assets/StreamingAssets/*
 !/Assets/StreamingAssets/.gitkeep
 /ProjectSettings/ProjectVersion.txt
-/Packages/*
 /UserSettings/*
 /UnityPackageManager/*
 
-/HybridCLRData/LocalIl2CppData/
-/HybridCLRData/il2cpp_plus_repo/
-/HybridCLRData/hybridclr_repo/
-/HybridCLRData/AssembliesPostIl2CppStrip/
-/HybridCLRData/HotfixDlls/
+/HybridCLRData

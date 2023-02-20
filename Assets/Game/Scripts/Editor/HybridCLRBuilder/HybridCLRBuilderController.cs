@@ -4,14 +4,14 @@ using Game.Hotfix;
 using GameFramework;
 using HybridCLR.Editor;
 using UnityEditor;
+using UnityEngine;
 using UnityGameFramework.Editor.ResourceTools;
-using Debug = UnityEngine.Debug;
 
 namespace Game.Editor
 {
     public class HybridCLRBuilderController
     {
-        private const string HotfixDllPath = "Assets/Game/Hotfix";
+        private const string HotfixDllPath = "Assets/Game/HybridCLR/Dlls";
         private const string HotfixDllName = "Game.Hotfix.dll";
 
         public string[] PlatformNames { get; }
@@ -64,34 +64,33 @@ namespace Game.Editor
         }
 
         /// <summary>
-        /// 将 dll 文件拷贝至项目目录，用于 AssetBundle 资源的编辑和打包。
+        /// 将 dll 文件拷贝至项目目录，用于 GameFramework 资源模块的编辑和打包。
         /// </summary>
         /// <param name="buildTarget"></param>
         public void CopyDllAssets(BuildTarget buildTarget)
         {
             IOUtility.CreateDirectoryIfNotExists(HotfixDllPath);
-            string buildPath = BuildConfig.GetHotFixDllsOutputDirByTarget(buildTarget);
+            string importSuffix = ".bytes";
 
             // Copy Hotfix Dll
-            string oriFileName = string.Format("{0}/{1}", buildPath, HotfixDllName);
-            string desFileName = string.Format("{0}/{1}.bytes", HotfixDllPath, HotfixDllName);
+            string oriFileName = Path.Combine(SettingsUtil.GetHotUpdateDllsOutputDirByTarget(buildTarget), HotfixDllName);
+            string desFileName = Path.Combine(HotfixDllPath, HotfixDllName + importSuffix);
             File.Copy(oriFileName, desFileName, true);
 
             // Copy AOT Dll
-            string aotDllPath = string.Format("{0}/{1}", BuildConfig.AssembliesPostIl2CppStripDir, buildTarget);
+            string aotDllPath = SettingsUtil.GetAssembliesPostIl2CppStripDir(buildTarget);
             foreach (var dllName in GameHotfixEntry.AOTDllNames)
             {
-                oriFileName = string.Format("{0}/{1}", aotDllPath, dllName);
+                oriFileName = Path.Combine(aotDllPath, dllName);
                 if (!File.Exists(oriFileName))
                 {
                     Debug.LogError($"AOT 补充元数据 dll: {oriFileName} 文件不存在。需要构建一次主包后才能生成裁剪后的 AOT dll.");
                     continue;
                 }
-                desFileName = string.Format("{0}/{1}.bytes", HotfixDllPath, dllName);
+                desFileName = Path.Combine(HotfixDllPath, dllName + importSuffix);
                 File.Copy(oriFileName, desFileName, true);
             }
 
-            Debug.Log("Hotfix dll build complete.");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
